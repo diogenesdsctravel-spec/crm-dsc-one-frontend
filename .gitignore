@@ -29,6 +29,11 @@ env/
 
 # OS
 .DS_Store
+__pycache__/
+*.pyc
+*.log
+.env
+.vscode/
 
 # Misc
 coverage
