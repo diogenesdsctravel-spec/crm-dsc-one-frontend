@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import Inbox from "../Inbox";
 
 const columnBaseStyle: React.CSSProperties = {
   borderRadius: 12,
@@ -8,6 +9,10 @@ const columnBaseStyle: React.CSSProperties = {
 };
 
 export const AppShell: React.FC = () => {
+  const [selectedConversationId, setSelectedConversationId] = useState<
+    string | null
+  >(null);
+
   return (
     <div
       style={{
@@ -60,15 +65,14 @@ export const AppShell: React.FC = () => {
           style={{
             ...columnBaseStyle,
             flexBasis: "24%",
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
           }}
         >
-          <div style={{ opacity: 0.6, marginBottom: 8 }}>Inbox</div>
-          <div
-            style={{
-              height: "100%",
-              borderRadius: 8,
-              backgroundColor: "rgb(209, 213, 219)",
-            }}
+          <Inbox
+            selectedId={selectedConversationId}
+            onSelectConversation={setSelectedConversationId}
           />
         </section>
 
