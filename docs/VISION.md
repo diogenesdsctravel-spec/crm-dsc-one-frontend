@@ -43,7 +43,7 @@ Pilares Técnicos
 
 Stack inicial
 Front-end: React + Vite + TypeScript
-Back-end: a definir
+Back-end: Python + FastAPI
 Banco: PostgreSQL
 
 Compromissos
