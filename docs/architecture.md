@@ -56,3 +56,8 @@ A URL de conexão é definida no arquivo .env (não commitado), usando a variáv
 O módulo src/db/connection.py é responsável por abrir a conexão e tratar erros básicos.
 Toda operação de banco futura passará por esse módulo.
 
+Domínios
+
+- Frontend (SPA): one.crm.dsctravel.com.br
+- Backend API: api.one.crm.dsctravel.com.br
+
