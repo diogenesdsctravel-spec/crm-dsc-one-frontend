@@ -15,16 +15,16 @@ Backend
 Banco de dados
 – PostgreSQL gerenciado pelo Supabase.
 – O Supabase fornece:
-  – instância Postgres gerenciada
-  – painel para inspeção de dados
-  – autenticação e storage opcionais (não usados no MVP por enquanto).
+– instância Postgres gerenciada
+– painel para inspeção de dados
+– autenticação e storage opcionais (não usados no MVP por enquanto).
 
 Diagrama textual simples
 
-Navegador (CRM DSC ONE – React) 
-  → faz chamadas HTTP/HTTPS para 
+Navegador (CRM DSC ONE – React)
+→ faz chamadas HTTP/HTTPS para
 Backend API (FastAPI em Python)
-  → que lê/escreve dados em 
+→ que lê/escreve dados em
 Banco de dados (PostgreSQL no Supabase).
 
 Fluxo de dados
@@ -38,13 +38,21 @@ Fluxo de dados
 Layout do repositório (decisão oficial)
 
 crm-dsc-one/
-  docs/        → documentação (vision, domain, schema, architecture etc.)
-  frontend/    → código do cliente (React + Vite + TypeScript)
-  backend/     → código da API (FastAPI + Python)
-  infra/       → scripts e arquivos de infraestrutura e deploy (futuro)
+docs/        → documentação (vision, domain, schema, architecture etc.)
+frontend/    → código do cliente (React + Vite + TypeScript)
+backend/     → código da API (FastAPI + Python)
+infra/       → scripts e arquivos de infraestrutura e deploy (futuro)
 
 Status
 
 – Stack oficial de backend: Python + FastAPI.
 – Banco oficial: PostgreSQL no Supabase.
 – Toda nova funcionalidade deve respeitar esse fluxo: Frontend → API → Supabase Postgres.
+
+Conexão com banco de dados
+
+O backend utiliza psycopg2 para conectar ao PostgreSQL hospedado no Supabase.
+A URL de conexão é definida no arquivo .env (não commitado), usando a variável DATABASE_URL.
+O módulo src/db/connection.py é responsável por abrir a conexão e tratar erros básicos.
+Toda operação de banco futura passará por esse módulo.
+
