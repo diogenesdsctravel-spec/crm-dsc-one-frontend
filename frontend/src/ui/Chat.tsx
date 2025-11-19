@@ -4,7 +4,11 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import ContactPanel from "./ContactPanel";
 import TaskPanel from "./TaskPanel";
 import CalendarPicker from "./CalendarPicker";
-import { fetchTasks, createTask, Task } from "../features/tasks/api";
+
+// importa o TIPO separado
+import type { Task } from "../features/tasks/api";
+// importa as FUNÇÕES que são valores
+import { fetchTasks, createTask } from "../features/tasks/api";
 
 interface ChatContact {
     id: string;

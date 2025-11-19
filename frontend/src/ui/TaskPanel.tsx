@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import "../index.css";
-import { Task } from "../features/tasks/api";
+import type { Task } from "../features/tasks/api";
 
 interface TaskPanelProps {
     onClose: () => void;
