@@ -5,7 +5,6 @@ import Inbox from "./ui/Inbox";
 import LeadCard from "./ui/LeadCard";
 import Chat from "./ui/Chat";
 import Dock from "./ui/Dock";
-import ContactPanel from "./ui/ContactPanel";
 
 export default function App() {
   const {
@@ -22,18 +21,8 @@ export default function App() {
     setSelectedQuoteId,
   } = useCRMData();
 
-  const [isContactPanelOpen, setIsContactPanelOpen] = useState(false);
-
   function handleSelectConversation(id: string) {
     selectConversation(id);
-  }
-
-  function handleOpenContactPanel() {
-    setIsContactPanelOpen(true);
-  }
-
-  function handleCloseContactPanel() {
-    setIsContactPanelOpen(false);
   }
 
   const activeConversation = selectedConversation || conversations[0];
@@ -99,25 +88,11 @@ export default function App() {
             composer={composer}
             onComposerChange={setComposer}
             onSendMessage={sendMessage}
-            onOpenContact={handleOpenContactPanel}
           />
         </section>
       </main>
 
       <Dock query="" onQueryChange={() => { }} onOpenFantasma={() => { }} />
-
-      {activeConversation && (
-        <ContactPanel
-          open={isContactPanelOpen}
-          onClose={handleCloseContactPanel}
-          contact={{
-            id: activeConversation.id,
-            name: activeConversation.nome,
-            phone: activeConversation.phone,
-            avatarUrl: activeConversation.avatarUrl,
-          }}
-        />
-      )}
     </div>
   );
 }

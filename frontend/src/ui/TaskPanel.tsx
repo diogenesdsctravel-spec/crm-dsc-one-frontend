@@ -1,10 +1,14 @@
+// src/ui/TaskPanel.tsx
+
 import React, { useState } from "react";
 import "../index.css";
+import { Task } from "../features/tasks/api";
 
 interface TaskPanelProps {
     onClose: () => void;
     onSelectPhrase: (text: string) => void;
     onSendCustom: (text: string) => void;
+    tasks: Task[];
 }
 
 const frases = [
@@ -18,6 +22,7 @@ export default function TaskPanel({
     onClose,
     onSelectPhrase,
     onSendCustom,
+    tasks,
 }: TaskPanelProps) {
     const [text, setText] = useState("");
 
@@ -27,6 +32,28 @@ export default function TaskPanel({
         <div className="taskpanel-overlay" onClick={onClose}>
             <div className="taskpanel-box" onClick={(e) => e.stopPropagation()}>
                 <h3>Criar tarefa</h3>
+
+                {/* Tarefas já ligadas a esta conversa */}
+                {tasks.length > 0 && (
+                    <div className="taskpanel-list">
+                        {tasks.map((t) => (
+                            <div key={t.id} className="taskpanel-task-item">
+                                <div className="taskpanel-task-title">{t.title}</div>
+                                <div className="taskpanel-task-meta">
+                                    {t.dueDate &&
+                                        new Date(t.dueDate).toLocaleString("pt-BR", {
+                                            day: "2-digit",
+                                            month: "2-digit",
+                                            year: "numeric",
+                                            hour: "2-digit",
+                                            minute: "2-digit",
+                                        })}
+                                    {t.status ? ` · ${t.status}` : null}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
 
                 {/* Frases pré-prontas */}
                 <div className="taskpanel-phrases">

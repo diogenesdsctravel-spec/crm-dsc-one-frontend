@@ -1,6 +1,7 @@
-/* src/ui/ContactPanel.tsx */
+// src/ui/ContactPanel.tsx
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { fetchContact, type Contact } from "../features/contacts/api";
 
 interface ContactPanelProps {
     open: boolean;
@@ -18,31 +19,61 @@ export default function ContactPanel({
     onClose,
     contact,
 }: ContactPanelProps) {
+    const [tab, setTab] = useState<"dados" | "midia">("dados");
+    const [fullContact, setFullContact] = useState<Contact | null>(null);
 
-    const [tab, setTab] = React.useState<"dados" | "midia">("dados");
+    // Quando abrir o painel, tenta buscar o contato no backend.
+    // Se der erro ou a rota não existir, ficamos só com o mock.
+    useEffect(() => {
+        if (!open) return;
+
+        let cancelled = false;
+
+        async function load() {
+            const data = await fetchContact(String(contact.id));
+            if (!cancelled && data) {
+                setFullContact(data);
+            }
+        }
+
+        load();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [open, contact.id]);
 
     if (!open) return null;
 
-    const initial = contact.name?.trim()?.charAt(0)?.toUpperCase() || "?";
+    const base: Contact = {
+        id: String(contact.id),
+        name: fullContact?.name ?? contact.name,
+        phone: fullContact?.phone ?? contact.phone,
+        avatarUrl: fullContact?.avatarUrl ?? contact.avatarUrl,
+        channelLabel: fullContact?.channelLabel,
+    };
+
+    const initial = base.name.trim().charAt(0).toUpperCase() || "?";
 
     return (
         <div className="contact-overlay" onClick={onClose}>
             <div className="contact-card" onClick={(e) => e.stopPropagation()}>
-
-                {/* HEADER */}
+                {/* topo: avatar, nome, telefone, ID */}
                 <header className="contact-card-header">
                     <div className="contact-avatar-large">
-                        {contact.avatarUrl ? (
-                            <img src={contact.avatarUrl} alt={contact.name} />
+                        {base.avatarUrl ? (
+                            <img src={base.avatarUrl} alt={base.name} />
                         ) : (
                             <span>{initial}</span>
                         )}
                     </div>
 
                     <div className="contact-card-title">
-                        <div className="contact-card-name">{contact.name}</div>
-                        <div className="contact-card-phone">{contact.phone ?? "Sem telefone"}</div>
-                        <div className="contact-card-id">ID: {contact.id}</div>
+                        <div className="contact-card-name">{base.name}</div>
+                        {base.phone && (
+                            <div className="contact-card-phone">{base.phone}</div>
+                        )}
+                        <div className="contact-card-id">ID: {base.id}</div>
                     </div>
 
                     <button
@@ -55,7 +86,7 @@ export default function ContactPanel({
                     </button>
                 </header>
 
-                {/* TABS */}
+                {/* abas Dados / Mídia */}
                 <nav className="contact-tabs">
                     <button
                         type="button"
@@ -66,7 +97,6 @@ export default function ContactPanel({
                     >
                         Dados
                     </button>
-
                     <button
                         type="button"
                         className={
@@ -78,9 +108,8 @@ export default function ContactPanel({
                     </button>
                 </nav>
 
-                {/* CONTENT */}
+                {/* conteúdo das abas */}
                 <div className="contact-body">
-
                     {tab === "dados" && (
                         <button
                             type="button"
@@ -101,7 +130,6 @@ export default function ContactPanel({
                             ))}
                         </div>
                     )}
-
                 </div>
             </div>
         </div>

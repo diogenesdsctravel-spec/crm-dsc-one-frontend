@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { fetchMessages } from "../features/messages/api";
 
 export type Quote = {
     id: string;
@@ -187,36 +188,46 @@ export function useCRMData() {
         [selectedConversation]
     );
 
-    const [allMessages, setAllMessages] = useState<Message[]>([
-        {
-            id: "m1",
-            convId: "1",
-            from: "cliente",
-            body: "Oi, tudo bem? Queria ver Orlando 2025.",
-            time: "09:12",
-        },
-        {
-            id: "m2",
-            convId: "1",
-            from: "agencia",
-            body: "Claro! Me fala as datas certinhas 🙌",
-            time: "09:13",
-        },
-        {
-            id: "m3",
-            convId: "2",
-            from: "cliente",
-            body: "Carla aqui, quero ir pra Buenos Aires.",
-            time: "10:01",
-        },
-    ]);
+    // Agora messages vem da API, não mais do array mock
+    const [messages, setMessages] = useState<Message[]>([]);
+
+    useEffect(() => {
+        if (!selectedConversationId) {
+            setMessages([]);
+            return;
+        }
+
+        let cancelled = false;
+
+        async function loadMessages() {
+            try {
+                const apiMessages = await fetchMessages(selectedConversationId);
+                if (cancelled) return;
+
+                const mapped: Message[] = apiMessages.map((m) => ({
+                    id: m.id,
+                    convId: selectedConversationId,
+                    from: m.from === "client" ? "cliente" : "agencia",
+                    body: m.body,
+                    time: m.time,
+                }));
+
+                setMessages(mapped);
+            } catch (err) {
+                if (cancelled) return;
+                console.error("Erro ao buscar mensagens", err);
+                setMessages([]);
+            }
+        }
+
+        loadMessages();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [selectedConversationId]);
 
     const [composer, setComposer] = useState("");
-
-    const messages = useMemo(
-        () => allMessages.filter((m) => m.convId === selectedConversationId),
-        [allMessages, selectedConversationId]
-    );
 
     function selectConversation(id: string) {
         setSelectedConversationId(id);
@@ -236,7 +247,8 @@ export function useCRMData() {
             minute: "2-digit",
         });
 
-        setAllMessages((prev) => [
+        // Mantém o comportamento atual: adiciona na lista local da conversa selecionada
+        setMessages((prev) => [
             ...prev,
             {
                 id: String(Date.now()),

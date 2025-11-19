@@ -1,7 +1,10 @@
+// src/ui/Chat.tsx
+
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import ContactPanel from "./ContactPanel";
 import TaskPanel from "./TaskPanel";
 import CalendarPicker from "./CalendarPicker";
+import { fetchTasks, createTask, Task } from "../features/tasks/api";
 
 interface ChatContact {
     id: string;
@@ -74,6 +77,9 @@ export default function Chat({
     const [showCalendar, setShowCalendar] = useState(false);
     const [pendingTaskText, setPendingTaskText] = useState("");
 
+    const convId = conversation?.id || "";
+    const [tasks, setTasks] = useState<Task[]>([]);
+
     const hasText = (composer || "").trim().length > 0;
 
     const changeComposer = onComposerChange || setComposer || (() => undefined);
@@ -88,6 +94,20 @@ export default function Chat({
     useEffect(() => {
         scrollToBottom();
     }, [messages?.length ?? 0, scrollToBottom]);
+
+    useEffect(() => {
+        if (!convId) {
+            setTasks([]);
+            return;
+        }
+
+        fetchTasks(convId)
+            .then((items) => setTasks(items))
+            .catch((err) => {
+                console.error("Erro ao carregar tarefas", err);
+                setTasks([]);
+            });
+    }, [convId]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -193,6 +213,7 @@ export default function Chat({
         <>
             {showTaskPanel && (
                 <TaskPanel
+                    tasks={tasks}
                     onClose={() => setShowTaskPanel(false)}
                     onSelectPhrase={(text: string) => {
                         setPendingTaskText(text);
@@ -210,9 +231,30 @@ export default function Chat({
             {showCalendar && (
                 <CalendarPicker
                     onClose={() => setShowCalendar(false)}
-                    onSelectDate={(date: string) => {
-                        alert("Tarefa salva: " + pendingTaskText + " em " + date);
-                        setShowCalendar(false);
+                    onSelectDate={async (date: string) => {
+                        if (!convId) {
+                            setShowCalendar(false);
+                            return;
+                        }
+
+                        try {
+                            const title =
+                                pendingTaskText.trim() || "Tarefa de acompanhamento";
+
+                            const newTask = await createTask({
+                                conversationId: convId,
+                                title,
+                                dueDate: date,
+                            });
+
+                            setTasks((prev) => [...prev, newTask]);
+                        } catch (err) {
+                            console.error("Erro ao criar tarefa", err);
+                            alert("Erro ao salvar tarefa");
+                        } finally {
+                            setShowCalendar(false);
+                            setPendingTaskText("");
+                        }
                     }}
                 />
             )}
