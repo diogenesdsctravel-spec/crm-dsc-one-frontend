@@ -1,6 +1,4 @@
-// src/features/messages/api.ts
-
-const API_BASE = "http://127.0.0.1:5050";
+import { apiUrl } from "../../services/config";
 
 export type ChatMessage = {
   id: string;
@@ -25,11 +23,11 @@ type BackendMessagesResponse = {
 export async function fetchMessages(
   conversationId: string
 ): Promise<ChatMessage[]> {
-  const url = `${API_BASE}/api/conversations/${encodeURIComponent(
+  const path = `/api/conversations/${encodeURIComponent(
     conversationId
   )}/messages`;
 
-  const res = await fetch(url);
+  const res = await fetch(apiUrl(path));
 
   if (!res.ok) {
     throw new Error(`Erro ao buscar mensagens: ${res.status}`);
@@ -58,15 +56,14 @@ export async function fetchMessages(
   });
 }
 
-// Função fina, com URL relativa, conforme solicitado
 export async function getMessages(
   conversationId: string
 ): Promise<BackendMessagesResponse> {
-  const url = `/api/conversations/${encodeURIComponent(
+  const path = `/api/conversations/${encodeURIComponent(
     conversationId
   )}/messages`;
 
-  const res = await fetch(url);
+  const res = await fetch(apiUrl(path));
 
   if (!res.ok) {
     throw new Error("Erro ao buscar mensagens");

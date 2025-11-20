@@ -1,5 +1,4 @@
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:5050";
+import { apiUrl } from "../../services/config";
 
 export type ConversationStatus = "open" | "archived";
 
@@ -26,12 +25,13 @@ export async function fetchConversations(
   const params = new URLSearchParams();
   if (status) params.set("status", status);
 
-  const url =
-    API_BASE_URL +
-    "/api/conversations" +
-    (params.toString() ? "?" + params.toString() : "");
+  let path = "/api/conversations";
+  const query = params.toString();
+  if (query) {
+    path += "?" + query;
+  }
 
-  const res = await fetch(url);
+  const res = await fetch(apiUrl(path));
 
   if (!res.ok) {
     throw new Error(
@@ -41,4 +41,3 @@ export async function fetchConversations(
 
   return res.json();
 }
-
