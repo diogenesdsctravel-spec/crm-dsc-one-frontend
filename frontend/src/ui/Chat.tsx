@@ -5,10 +5,8 @@ import ContactPanel from "./ContactPanel";
 import TaskPanel from "./TaskPanel";
 import CalendarPicker from "./CalendarPicker";
 
-// importa o TIPO separado
-import type { Task } from "../features/tasks/api";
-// importa as FUNÇÕES que são valores
-import { fetchTasks, createTask } from "../features/tasks/api";
+import { createTask } from "../features/tasks/api";
+import { fetchMessages } from "../features/conversations/api";
 
 interface ChatContact {
     id: string;
@@ -48,7 +46,7 @@ type MockAttachment = {
 };
 
 export default function Chat({
-    messages,
+    messages: _unusedMessages,
     composer,
     conversation,
     contact,
@@ -82,7 +80,12 @@ export default function Chat({
     const [pendingTaskText, setPendingTaskText] = useState("");
 
     const convId = conversation?.id || "";
-    const [tasks, setTasks] = useState<Task[]>([]);
+
+    // estados da Fase 8 para mensagens
+    const [messages, setMessages] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [reloadToken, setReloadToken] = useState(0);
 
     const hasText = (composer || "").trim().length > 0;
 
@@ -95,23 +98,43 @@ export default function Chat({
         el.scrollTop = el.scrollHeight + 9999;
     }, []);
 
+    // carrega mensagens da API com padrão loading/error/reloadToken
     useEffect(() => {
-        scrollToBottom();
-    }, [messages?.length ?? 0, scrollToBottom]);
+        if (!convId) return;
 
-    useEffect(() => {
-        if (!convId) {
-            setTasks([]);
-            return;
+        let cancelled = false;
+
+        async function loadMessages() {
+            try {
+                setLoading(true);
+                setError(null);
+
+                const data = await fetchMessages(convId);
+
+                if (cancelled) return;
+
+                setMessages(data.items);
+            } catch (err) {
+                if (!cancelled) {
+                    setError("Erro ao carregar mensagens.");
+                }
+            } finally {
+                if (!cancelled) {
+                    setLoading(false);
+                }
+            }
         }
 
-        fetchTasks(convId)
-            .then((items) => setTasks(items))
-            .catch((err) => {
-                console.error("Erro ao carregar tarefas", err);
-                setTasks([]);
-            });
-    }, [convId]);
+        loadMessages();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [convId, reloadToken]);
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages.length, scrollToBottom]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -213,11 +236,31 @@ export default function Chat({
         return String(value);
     };
 
+    // bloqueios de retorno (Fase 8) – mensagens
+    if (!convId) {
+        return <div className="chat-empty">Selecione uma conversa</div>;
+    }
+
+    if (loading) {
+        return <div className="chat-loading">Carregando mensagens...</div>;
+    }
+
+    if (error) {
+        return (
+            <div className="chat-error">
+                <div>{error}</div>
+                <button type="button" onClick={() => setReloadToken((x) => x + 1)}>
+                    Tentar novamente
+                </button>
+            </div>
+        );
+    }
+
     return (
         <>
             {showTaskPanel && (
                 <TaskPanel
-                    tasks={tasks}
+                    conversationId={convId}
                     onClose={() => setShowTaskPanel(false)}
                     onSelectPhrase={(text: string) => {
                         setPendingTaskText(text);
@@ -245,13 +288,12 @@ export default function Chat({
                             const title =
                                 pendingTaskText.trim() || "Tarefa de acompanhamento";
 
-                            const newTask = await createTask({
+                            await createTask({
                                 conversationId: convId,
                                 title,
                                 dueDate: date,
                             });
-
-                            setTasks((prev) => [...prev, newTask]);
+                            // se quiser, depois a gente pode plugar um reload de tarefas aqui
                         } catch (err) {
                             console.error("Erro ao criar tarefa", err);
                             alert("Erro ao salvar tarefa");

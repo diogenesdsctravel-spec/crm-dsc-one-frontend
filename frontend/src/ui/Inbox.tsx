@@ -18,6 +18,7 @@ export default function Inbox({ selectedId, onSelectConversation }: Props) {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [reloadToken, setReloadToken] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -44,7 +45,7 @@ export default function Inbox({ selectedId, onSelectConversation }: Props) {
         console.log("[Inbox] conversas da API:", mapped);
       } catch (err) {
         if (!cancelled) {
-          setError("Não foi possível carregar a Inbox.");
+          setError("Erro ao carregar conversas.");
         }
       } finally {
         if (!cancelled) {
@@ -58,14 +59,33 @@ export default function Inbox({ selectedId, onSelectConversation }: Props) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [reloadToken]);
 
   if (loading) {
     return <div>Carregando conversas...</div>;
   }
 
   if (error) {
-    return <div style={{ color: "red", fontSize: 14 }}>{error}</div>;
+    return (
+      <div style={{ padding: 12 }}>
+        <div style={{ color: "red", fontSize: 14, marginBottom: 8 }}>
+          {error}
+        </div>
+        <button
+          type="button"
+          onClick={() => setReloadToken((x) => x + 1)}
+          style={{
+            fontSize: 14,
+            padding: "6px 12px",
+            borderRadius: 6,
+            border: "1px solid #ccc",
+            cursor: "pointer",
+          }}
+        >
+          Tentar novamente
+        </button>
+      </div>
+    );
   }
 
   const total = conversations.length;

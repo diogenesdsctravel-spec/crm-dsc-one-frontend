@@ -1,4 +1,3 @@
-// src/ui/ContactPanel.tsx
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import { fetchContact, type Contact } from "../features/contacts/api";
@@ -22,6 +21,10 @@ export default function ContactPanel({
     const [tab, setTab] = useState<"dados" | "midia">("dados");
     const [fullContact, setFullContact] = useState<Contact | null>(null);
 
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [reloadToken, setReloadToken] = useState(0);
+
     // Quando abrir o painel, tenta buscar o contato no backend.
     // Se der erro ou a rota não existir, ficamos só com o mock.
     useEffect(() => {
@@ -30,9 +33,23 @@ export default function ContactPanel({
         let cancelled = false;
 
         async function load() {
-            const data = await fetchContact(String(contact.id));
-            if (!cancelled && data) {
-                setFullContact(data);
+            try {
+                setLoading(true);
+                setError(null);
+
+                const data = await fetchContact(String(contact.id));
+
+                if (!cancelled && data) {
+                    setFullContact(data);
+                }
+            } catch (err) {
+                if (!cancelled) {
+                    setError("Erro ao carregar contato.");
+                }
+            } finally {
+                if (!cancelled) {
+                    setLoading(false);
+                }
             }
         }
 
@@ -41,9 +58,28 @@ export default function ContactPanel({
         return () => {
             cancelled = true;
         };
-    }, [open, contact.id]);
+    }, [open, contact.id, reloadToken]);
 
     if (!open) return null;
+
+    if (!contact?.id) {
+        return <div className="contact-empty">Nenhum contato selecionado</div>;
+    }
+
+    if (loading) {
+        return <div className="contact-loading">Carregando contato...</div>;
+    }
+
+    if (error) {
+        return (
+            <div className="contact-error">
+                <div>{error}</div>
+                <button type="button" onClick={() => setReloadToken((x) => x + 1)}>
+                    Tentar novamente
+                </button>
+            </div>
+        );
+    }
 
     const base: Contact = {
         id: String(contact.id),
@@ -125,7 +161,9 @@ export default function ContactPanel({
                             {Array.from({ length: 20 }).map((_, idx) => (
                                 <div key={idx} className="contact-media-item">
                                     <div className="contact-media-thumb" />
-                                    <span className="contact-media-label">Mídia {idx + 1}</span>
+                                    <span className="contact-media-label">
+                                        Mídia {idx + 1}
+                                    </span>
                                 </div>
                             ))}
                         </div>
