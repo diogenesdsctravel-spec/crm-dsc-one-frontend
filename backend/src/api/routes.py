@@ -23,15 +23,17 @@ mock_conversations: List[Dict] = [
         "lastMessageAt": "2025-11-19T14:35:00Z",
         "unreadCount": 2,
         "status": "open",
+        "workspace": "inbox",
     },
     {
         "id": "conv_2",
-        "contactId": "contact_2",
+            "contactId": "contact_2",
         "contactName": "Maria Souza",
         "lastMessagePreview": "Obrigada, vou ver com meu marido",
         "lastMessageAt": "2025-11-18T10:20:00Z",
         "unreadCount": 0,
         "status": "archived",
+        "workspace": "fantasma",
     },
 ]
 
@@ -170,4 +172,3 @@ def create_task(payload: TaskCreate):
 
     mock_tasks.append(task)
     return task
-

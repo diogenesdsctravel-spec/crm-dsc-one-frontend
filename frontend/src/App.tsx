@@ -1,3 +1,4 @@
+// frontend/src/App.tsx
 import React, { useState } from "react";
 
 import { useCRMData } from "./hooks/useCRMData";
@@ -5,6 +6,8 @@ import Inbox from "./ui/Inbox";
 import LeadCard from "./ui/LeadCard";
 import Chat from "./ui/Chat";
 import Dock from "./ui/Dock";
+
+type Workspace = "inbox" | "fantasma";
 
 export default function App() {
   const {
@@ -21,14 +24,33 @@ export default function App() {
     setSelectedQuoteId,
   } = useCRMData();
 
+  const [activeWorkspace, setActiveWorkspace] = useState<Workspace>("inbox");
+
   function handleSelectConversation(id: string) {
     selectConversation(id);
   }
 
-  const activeConversation = selectedConversation || conversations[0];
+  const filteredConversations = conversations.filter(
+    (c) => c.workspace === activeWorkspace
+  );
+
+  const inboxPendingCount = conversations.filter(
+    (c) => c.workspace === "inbox" && (c.unreadCount ?? 0) > 0
+  ).length;
+
+  const fantasmaPendingCount = conversations.filter(
+    (c) => c.workspace === "fantasma" && (c.unreadCount ?? 0) > 0
+  ).length;
+
+  const activeConversation =
+    selectedConversation || filteredConversations[0];
 
   return (
-    <div className="app">
+    <div
+      className={
+        "app" + (activeWorkspace === "fantasma" ? " app-fantasma" : "")
+      }
+    >
       <header className="topbar">
         <div className="app-title">DSC CRM</div>
 
@@ -42,7 +64,7 @@ export default function App() {
         {/* Coluna 1 – Inbox */}
         <section>
           <Inbox
-            conversations={conversations}
+            conversations={filteredConversations}
             selectedId={selectedConversationId}
             onSelectConversation={handleSelectConversation}
           />
@@ -92,7 +114,12 @@ export default function App() {
         </section>
       </main>
 
-      <Dock query="" onQueryChange={() => { }} onOpenFantasma={() => { }} />
+      <Dock
+        activeWorkspace={activeWorkspace}
+        inboxPendingCount={inboxPendingCount}
+        fantasmaPendingCount={fantasmaPendingCount}
+        onSelectWorkspace={setActiveWorkspace}
+      />
     </div>
   );
 }

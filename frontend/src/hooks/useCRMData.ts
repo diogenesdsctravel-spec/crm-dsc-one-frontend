@@ -18,6 +18,8 @@ export type Quote = {
 export type Conversation = {
     id: string;
     nome: string;
+    workspace: "inbox" | "fantasma";
+    unreadCount?: number;
     titulo?: string;
     origem?: string;
     destino?: string;
@@ -45,6 +47,7 @@ const INITIAL_CONVERSATIONS: Conversation[] = [
     {
         id: "conv_1",
         nome: "João Silva",
+        workspace: "inbox",
         titulo: "Orlando 2025",
         origem: "Salvador, Brasil",
         destino: "Orlando, EUA",
@@ -83,6 +86,7 @@ const INITIAL_CONVERSATIONS: Conversation[] = [
     {
         id: "conv_2",
         nome: "Maria Souza",
+        workspace: "inbox",
         titulo: "Viagem a Buenos Aires",
         origem: "Salvador, Brasil",
         destino: "Buenos Aires, Argentina",
@@ -105,6 +109,7 @@ const INITIAL_CONVERSATIONS: Conversation[] = [
     {
         id: "3",
         nome: "Gileade",
+        workspace: "inbox",
         titulo: "Férias em Gramado",
         origem: "Salvador, Brasil",
         destino: "Gramado, Brasil",
@@ -127,42 +132,49 @@ const INITIAL_CONVERSATIONS: Conversation[] = [
     {
         id: "4",
         nome: "Cliente 4",
+        workspace: "fantasma",
         avatarUrl: "https://i.pravatar.cc/150?img=4",
         quotes: [],
     },
     {
         id: "5",
         nome: "Cliente 5",
+        workspace: "fantasma",
         avatarUrl: "https://i.pravatar.cc/150?img=5",
         quotes: [],
     },
     {
         id: "6",
         nome: "Cliente 6",
+        workspace: "fantasma",
         avatarUrl: "https://i.pravatar.cc/150?img=6",
         quotes: [],
     },
     {
         id: "7",
         nome: "Cliente 7",
+        workspace: "fantasma",
         avatarUrl: "https://i.pravatar.cc/150?img=7",
         quotes: [],
     },
     {
         id: "8",
         nome: "Cliente 8",
+        workspace: "fantasma",
         avatarUrl: "https://i.pravatar.cc/150?img=8",
         quotes: [],
     },
     {
         id: "9",
         nome: "Cliente 9",
+        workspace: "fantasma",
         avatarUrl: "https://i.pravatar.cc/150?img=9",
         quotes: [],
     },
     {
         id: "10",
         nome: "Cliente 10",
+        workspace: "fantasma",
         avatarUrl: "https://i.pravatar.cc/150?img=10",
         quotes: [],
     },
@@ -192,6 +204,9 @@ export function useCRMData() {
                     return {
                         id: item.id,
                         nome: item.contactName,
+                        workspace: (item as any).workspace ?? base?.workspace ?? "inbox",
+                        unreadCount:
+                            (item as any).unreadCount ?? base?.unreadCount ?? 0,
                         avatarUrl: base?.avatarUrl,
                         phone: base?.phone,
                         channelLabel: base?.channelLabel ?? "via WhatsApp",

@@ -1422,3 +1422,13 @@ button.primary {
   font-size: 11px;
   color: #64748b;
 }
+
+/* VARIAÇÃO VISUAL PARA ESPAÇO FANTASMA */
+
+.app-fantasma .inbox-root {
+  background-color: rgb(245, 247, 255);
+}
+
+.app-fantasma .inbox-item {
+  box-shadow: none;
+}

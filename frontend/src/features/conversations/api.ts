@@ -1,5 +1,7 @@
 import { apiUrl } from "../../services/config";
 
+export type ConversationWorkspace = "inbox" | "fantasma";
+
 export type ConversationStatus = "open" | "archived";
 
 export type ConversationSummary = {
@@ -10,6 +12,7 @@ export type ConversationSummary = {
   lastMessageAt: string;
   unreadCount: number;
   status: ConversationStatus;
+  workspace: ConversationWorkspace;
 };
 
 export type ConversationListResponse = {
