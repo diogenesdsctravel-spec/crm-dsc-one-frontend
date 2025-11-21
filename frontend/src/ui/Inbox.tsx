@@ -41,6 +41,7 @@ export default function Inbox({ selectedId, onSelectConversation }: Props) {
         );
 
         setConversations(mapped);
+        console.log("[Inbox] conversas da API:", mapped);
       } catch (err) {
         if (!cancelled) {
           setError("Não foi possível carregar a Inbox.");

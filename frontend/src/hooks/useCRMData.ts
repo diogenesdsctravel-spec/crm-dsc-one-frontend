@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { fetchMessages } from "../features/messages/api";
+import { fetchConversations } from "../features/conversations/api";
 
 export type Quote = {
     id: string;
@@ -40,135 +41,192 @@ export type Message = {
     time?: string;
 };
 
-export function useCRMData() {
-    const [conversations] = useState<Conversation[]>([
-        {
-            id: "conv_1",
-            nome: "João Silva",
-            titulo: "Orlando 2025",
-            origem: "Salvador, Brasil",
-            destino: "Orlando, EUA",
-            checkin: "2025-07-10",
-            checkout: "2025-07-20",
-            adultos: 2,
-            criancas: 1,
-            produtos: "Pacote completo",
-            valorCentavos: 128900,
-            avatarUrl: "https://i.pravatar.cc/150?img=1",
-            phone: "+55 11 99999-0000",
-            channelLabel: "via WhatsApp",
-            quotes: [
-                {
-                    id: "q1-1",
-                    titulo: "Orlando 2025",
-                    origem: "Salvador, Brasil",
-                    destino: "Orlando, EUA",
-                    checkin: "2025-07-10",
-                    checkout: "2025-07-20",
-                    adultos: 2,
-                    criancas: 1,
-                    produtos: "Pacote completo",
-                    valorCentavos: 128900,
-                },
-                {
-                    id: "q1-2",
-                    titulo: "Nova York 2026",
-                    origem: "Salvador, Brasil",
-                    destino: "Nova York, EUA",
-                    produtos: "Aéreo + hotel",
-                    valorCentavos: 159900,
-                },
-            ],
-        },
-        {
-            id: "conv_2",
-            nome: "Maria Souza",
-            titulo: "Viagem a Buenos Aires",
-            origem: "Salvador, Brasil",
-            destino: "Buenos Aires, Argentina",
-            produtos: "Aéreo + hotel",
-            valorCentavos: 78900,
-            avatarUrl: "https://i.pravatar.cc/150?img=2",
-            phone: "+55 71 98888-0001",
-            channelLabel: "via WhatsApp",
-            quotes: [
-                {
-                    id: "q2-1",
-                    titulo: "Buenos Aires 2025",
-                    origem: "Salvador, Brasil",
-                    destino: "Buenos Aires, Argentina",
-                    produtos: "Aéreo + hotel",
-                    valorCentavos: 78900,
-                },
-            ],
-        },
-        {
-            id: "3",
-            nome: "Gileade",
-            titulo: "Férias em Gramado",
-            origem: "Salvador, Brasil",
-            destino: "Gramado, Brasil",
-            produtos: "Pacote terrestre",
-            valorCentavos: 45900,
-            avatarUrl: "https://i.pravatar.cc/150?img=3",
-            phone: "+55 21 97777-0002",
-            channelLabel: "via WhatsApp",
-            quotes: [
-                {
-                    id: "q3-1",
-                    titulo: "Gramado 2025",
-                    origem: "Salvador, Brasil",
-                    destino: "Gramado, Brasil",
-                    produtos: "Pacote terrestre",
-                    valorCentavos: 45900,
-                },
-            ],
-        },
-        {
-            id: "4",
-            nome: "Cliente 4",
-            avatarUrl: "https://i.pravatar.cc/150?img=4",
-            quotes: [],
-        },
-        {
-            id: "5",
-            nome: "Cliente 5",
-            avatarUrl: "https://i.pravatar.cc/150?img=5",
-            quotes: [],
-        },
-        {
-            id: "6",
-            nome: "Cliente 6",
-            avatarUrl: "https://i.pravatar.cc/150?img=6",
-            quotes: [],
-        },
-        {
-            id: "7",
-            nome: "Cliente 7",
-            avatarUrl: "https://i.pravatar.cc/150?img=7",
-            quotes: [],
-        },
-        {
-            id: "8",
-            nome: "Cliente 8",
-            avatarUrl: "https://i.pravatar.cc/150?img=8",
-            quotes: [],
-        },
-        {
-            id: "9",
-            nome: "Cliente 9",
-            avatarUrl: "https://i.pravatar.cc/150?img=9",
-            quotes: [],
-        },
-        {
-            id: "10",
-            nome: "Cliente 10",
-            avatarUrl: "https://i.pravatar.cc/150?img=10",
-            quotes: [],
-        },
-    ]);
+const INITIAL_CONVERSATIONS: Conversation[] = [
+    {
+        id: "conv_1",
+        nome: "João Silva",
+        titulo: "Orlando 2025",
+        origem: "Salvador, Brasil",
+        destino: "Orlando, EUA",
+        checkin: "2025-07-10",
+        checkout: "2025-07-20",
+        adultos: 2,
+        criancas: 1,
+        produtos: "Pacote completo",
+        valorCentavos: 128900,
+        avatarUrl: "https://i.pravatar.cc/150?img=1",
+        phone: "+55 11 99999-0000",
+        channelLabel: "via WhatsApp",
+        quotes: [
+            {
+                id: "q1-1",
+                titulo: "Orlando 2025",
+                origem: "Salvador, Brasil",
+                destino: "Orlando, EUA",
+                checkin: "2025-07-10",
+                checkout: "2025-07-20",
+                adultos: 2,
+                criancas: 1,
+                produtos: "Pacote completo",
+                valorCentavos: 128900,
+            },
+            {
+                id: "q1-2",
+                titulo: "Nova York 2026",
+                origem: "Salvador, Brasil",
+                destino: "Nova York, EUA",
+                produtos: "Aéreo + hotel",
+                valorCentavos: 159900,
+            },
+        ],
+    },
+    {
+        id: "conv_2",
+        nome: "Maria Souza",
+        titulo: "Viagem a Buenos Aires",
+        origem: "Salvador, Brasil",
+        destino: "Buenos Aires, Argentina",
+        produtos: "Aéreo + hotel",
+        valorCentavos: 78900,
+        avatarUrl: "https://i.pravatar.cc/150?img=2",
+        phone: "+55 71 98888-0001",
+        channelLabel: "via WhatsApp",
+        quotes: [
+            {
+                id: "q2-1",
+                titulo: "Buenos Aires 2025",
+                origem: "Salvador, Brasil",
+                destino: "Buenos Aires, Argentina",
+                produtos: "Aéreo + hotel",
+                valorCentavos: 78900,
+            },
+        ],
+    },
+    {
+        id: "3",
+        nome: "Gileade",
+        titulo: "Férias em Gramado",
+        origem: "Salvador, Brasil",
+        destino: "Gramado, Brasil",
+        produtos: "Pacote terrestre",
+        valorCentavos: 45900,
+        avatarUrl: "https://i.pravatar.cc/150?img=3",
+        phone: "+55 21 97777-0002",
+        channelLabel: "via WhatsApp",
+        quotes: [
+            {
+                id: "q3-1",
+                titulo: "Gramado 2025",
+                origem: "Salvador, Brasil",
+                destino: "Gramado, Brasil",
+                produtos: "Pacote terrestre",
+                valorCentavos: 45900,
+            },
+        ],
+    },
+    {
+        id: "4",
+        nome: "Cliente 4",
+        avatarUrl: "https://i.pravatar.cc/150?img=4",
+        quotes: [],
+    },
+    {
+        id: "5",
+        nome: "Cliente 5",
+        avatarUrl: "https://i.pravatar.cc/150?img=5",
+        quotes: [],
+    },
+    {
+        id: "6",
+        nome: "Cliente 6",
+        avatarUrl: "https://i.pravatar.cc/150?img=6",
+        quotes: [],
+    },
+    {
+        id: "7",
+        nome: "Cliente 7",
+        avatarUrl: "https://i.pravatar.cc/150?img=7",
+        quotes: [],
+    },
+    {
+        id: "8",
+        nome: "Cliente 8",
+        avatarUrl: "https://i.pravatar.cc/150?img=8",
+        quotes: [],
+    },
+    {
+        id: "9",
+        nome: "Cliente 9",
+        avatarUrl: "https://i.pravatar.cc/150?img=9",
+        quotes: [],
+    },
+    {
+        id: "10",
+        nome: "Cliente 10",
+        avatarUrl: "https://i.pravatar.cc/150?img=10",
+        quotes: [],
+    },
+];
 
-    const [selectedConversationId, setSelectedConversationId] = useState("conv_1");
+export function useCRMData() {
+    const [conversations, setConversations] =
+        useState<Conversation[]>(INITIAL_CONVERSATIONS);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        async function loadConversationsFromApi() {
+            try {
+                const data = await fetchConversations("open");
+                if (cancelled) return;
+
+                console.log("[useCRMData] conversas da API:", data.items);
+
+                const mockById = new Map(
+                    INITIAL_CONVERSATIONS.map((c) => [c.id, c] as const)
+                );
+
+                const merged: Conversation[] = data.items.map((item) => {
+                    const base = mockById.get(item.id);
+
+                    return {
+                        id: item.id,
+                        nome: item.contactName,
+                        avatarUrl: base?.avatarUrl,
+                        phone: base?.phone,
+                        channelLabel: base?.channelLabel ?? "via WhatsApp",
+                        titulo: base?.titulo,
+                        origem: base?.origem,
+                        destino: base?.destino,
+                        checkin: base?.checkin,
+                        checkout: base?.checkout,
+                        adultos: base?.adultos,
+                        criancas: base?.criancas,
+                        produtos: base?.produtos,
+                        valorCentavos: base?.valorCentavos,
+                        quotes: base?.quotes ?? [],
+                    };
+                });
+
+                setConversations(merged);
+            } catch (err) {
+                if (cancelled) return;
+                console.error(
+                    "[useCRMData] erro ao buscar conversas da API",
+                    err
+                );
+            }
+        }
+
+        loadConversationsFromApi();
+
+        return () => {
+            cancelled = true;
+        };
+    }, []);
+
+    const [selectedConversationId, setSelectedConversationId] =
+        useState("conv_1");
 
     const [selectedQuoteId, setSelectedQuoteId] = useState<string | null>(() => {
         const firstConv = conversations[0];
@@ -188,7 +246,6 @@ export function useCRMData() {
         [selectedConversation]
     );
 
-    // Agora messages vem da API, não mais do array mock
     const [messages, setMessages] = useState<Message[]>([]);
 
     useEffect(() => {
@@ -247,7 +304,6 @@ export function useCRMData() {
             minute: "2-digit",
         });
 
-        // Mantém o comportamento atual: adiciona na lista local da conversa selecionada
         setMessages((prev) => [
             ...prev,
             {
