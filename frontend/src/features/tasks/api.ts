@@ -1,5 +1,7 @@
 // src/features/tasks/api.ts
 
+import { apiUrl } from "../../services/config";
+
 export type Task = {
     id: string;
     conversationId: string;
@@ -13,9 +15,11 @@ export type Task = {
 export async function fetchTasks(conversationId: string): Promise<Task[]> {
     if (!conversationId) return [];
 
-    const res = await fetch(
+    const url = apiUrl(
         `/api/tasks?conversationId=${encodeURIComponent(conversationId)}`
     );
+
+    const res = await fetch(url);
 
     if (!res.ok) {
         console.error("Erro ao buscar tarefas", res.status);
@@ -31,7 +35,9 @@ export async function createTask(input: {
     title: string;
     dueDate: string;
 }): Promise<Task> {
-    const res = await fetch("/api/tasks", {
+    const url = apiUrl("/api/tasks");
+
+    const res = await fetch(url, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

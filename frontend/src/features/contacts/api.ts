@@ -1,6 +1,6 @@
 // src/features/contacts/api.ts
 
-const API_BASE = "http://127.0.0.1:5050";
+import { apiUrl } from "../../services/config";
 
 export type Contact = {
     id: string;
@@ -23,7 +23,7 @@ type BackendContact = {
 };
 
 export async function fetchContact(id: string): Promise<Contact | null> {
-    const url = `${API_BASE}/api/contacts/${encodeURIComponent(id)}`;
+    const url = apiUrl(`/api/contacts/${encodeURIComponent(id)}`);
 
     try {
         const res = await fetch(url);
