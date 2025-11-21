@@ -43,8 +43,8 @@ export type Message = {
 export function useCRMData() {
     const [conversations] = useState<Conversation[]>([
         {
-            id: "1",
-            nome: "Muilo",
+            id: "conv_1",
+            nome: "João Silva",
             titulo: "Orlando 2025",
             origem: "Salvador, Brasil",
             destino: "Orlando, EUA",
@@ -81,8 +81,8 @@ export function useCRMData() {
             ],
         },
         {
-            id: "2",
-            nome: "Carla Francielle",
+            id: "conv_2",
+            nome: "Maria Souza",
             titulo: "Viagem a Buenos Aires",
             origem: "Salvador, Brasil",
             destino: "Buenos Aires, Argentina",
@@ -168,7 +168,7 @@ export function useCRMData() {
         },
     ]);
 
-    const [selectedConversationId, setSelectedConversationId] = useState("1");
+    const [selectedConversationId, setSelectedConversationId] = useState("conv_1");
 
     const [selectedQuoteId, setSelectedQuoteId] = useState<string | null>(() => {
         const firstConv = conversations[0];
