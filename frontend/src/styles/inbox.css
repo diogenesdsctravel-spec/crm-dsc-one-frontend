@@ -1,0 +1,213 @@
+/* CONTAINER DO INBOX (COLUNA 1) */
+
+.inbox-root {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.inbox-count {
+    margin: 4px 0 16px;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+/* Lista Inbox */
+
+.inbox-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.inbox-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    border-radius: 24px;
+    background: #ffffff;
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    margin-bottom: 10px;
+    transition: transform 120ms ease, box-shadow 120ms ease,
+        background-color 120ms ease;
+}
+
+.inbox-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+.inbox-item-active {
+    background: #e9efff;
+    box-shadow: 0 10px 26px rgba(37, 99, 235, 0.18);
+}
+
+/* Avatar do Inbox: foto ou inicial, igual WhatsApp */
+
+.inbox-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 999px;
+    background: #3b82f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 20px;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.inbox-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 999px;
+}
+
+/* Texto do item de inbox – padrão WhatsApp */
+
+.inbox-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    align-items: flex-start;
+    text-align: left;
+}
+
+.inbox-name {
+    font-size: 16px;
+    font-weight: 500;
+    color: #111111;
+    margin-bottom: 2px;
+}
+
+.inbox-last {
+    font-size: 14px;
+    color: #666666;
+    max-width: 230px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/* CSS adicional para painel Inbox em layout antigo */
+
+.panel.panel-inbox {
+    display: flex;
+    flex-direction: column;
+}
+
+.panel.panel-inbox .panel-body.inbox-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+/* VARIAÇÃO VISUAL PARA ESPAÇO FANTASMA */
+
+.app-fantasma .inbox-root {
+    background-color: rgb(245, 247, 255);
+}
+
+.app-fantasma .inbox-item {
+    box-shadow: none;
+}
+
+/* OVERLAY DO ESPAÇO FANTASMA */
+
+.fantasma-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 40;
+}
+
+.fantasma-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(9, 7, 125, 0.12);
+    backdrop-filter: blur(2px);
+    pointer-events: auto;
+}
+
+.fantasma-shell {
+    position: relative;
+    pointer-events: auto;
+    width: min(1120px, 100% - 48px);
+    height: min(640px, 100% - 48px);
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow: 0 22px 45px rgba(0, 0, 0, 0.18);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.fantasma-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.fantasma-title {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.fantasma-subtitle {
+    font-size: 12px;
+    color: #666666;
+}
+
+.fantasma-close {
+    border: none;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    background: #f3f4ff;
+    cursor: pointer;
+}
+
+.fantasma-body {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1.1fr 1.2fr 1.3fr;
+    gap: 0;
+    background: #f7f8ff;
+    padding: 12px;
+}
+
+.fantasma-column {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.fantasma-placeholder {
+    font-size: 12px;
+    color: #999999;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}

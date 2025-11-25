@@ -180,6 +180,41 @@ const INITIAL_CONVERSATIONS: Conversation[] = [
     },
 ];
 
+const WORKSPACE_STORAGE_KEY = "dsc_one_workspace_overrides";
+
+type WorkspaceOverrideMap = Record<string, Conversation["workspace"]>;
+
+function loadWorkspaceOverrides(): WorkspaceOverrideMap {
+    if (typeof window === "undefined") {
+        return {} as WorkspaceOverrideMap;
+    }
+
+    try {
+        const raw = window.localStorage.getItem(WORKSPACE_STORAGE_KEY);
+        if (!raw) return {} as WorkspaceOverrideMap;
+
+        const parsed = JSON.parse(raw) as WorkspaceOverrideMap;
+        return parsed || ({} as WorkspaceOverrideMap);
+    } catch (error) {
+        console.warn("[WorkspacePersist] erro ao carregar overrides", error);
+        return {} as WorkspaceOverrideMap;
+    }
+}
+
+function saveWorkspaceOverrides(overrides: WorkspaceOverrideMap) {
+    if (typeof window === "undefined") return;
+
+    try {
+        window.localStorage.setItem(
+            WORKSPACE_STORAGE_KEY,
+            JSON.stringify(overrides)
+        );
+        console.log("[WorkspacePersist] overrides salvos", overrides);
+    } catch (error) {
+        console.warn("[WorkspacePersist] erro ao salvar overrides", error);
+    }
+}
+
 export function useCRMData() {
     const [conversations, setConversations] =
         useState<Conversation[]>(INITIAL_CONVERSATIONS);
@@ -189,24 +224,31 @@ export function useCRMData() {
 
         async function loadConversationsFromApi() {
             try {
-                const data = await fetchConversations("open");
+                const data = await fetchConversations();
                 if (cancelled) return;
 
                 console.log("[useCRMData] conversas da API:", data.items);
+
+                const overrides = loadWorkspaceOverrides();
 
                 const mockById = new Map(
                     INITIAL_CONVERSATIONS.map((c) => [c.id, c] as const)
                 );
 
-                const merged: Conversation[] = data.items.map((item) => {
+                const merged: Conversation[] = data.items.map((item: any) => {
                     const base = mockById.get(item.id);
+                    const overrideWorkspace = overrides[item.id];
 
                     return {
                         id: item.id,
-                        nome: item.contactName,
-                        workspace: (item as any).workspace ?? base?.workspace ?? "inbox",
+                        nome: item.contactName || base?.nome || "Sem nome",
+                        workspace:
+                            overrideWorkspace ??
+                            (item.workspace as Conversation["workspace"]) ??
+                            base?.workspace ??
+                            "inbox",
                         unreadCount:
-                            (item as any).unreadCount ?? base?.unreadCount ?? 0,
+                            item.unreadCount ?? base?.unreadCount ?? 0,
                         avatarUrl: base?.avatarUrl,
                         phone: base?.phone,
                         channelLabel: base?.channelLabel ?? "via WhatsApp",
@@ -226,10 +268,7 @@ export function useCRMData() {
                 setConversations(merged);
             } catch (err) {
                 if (cancelled) return;
-                console.error(
-                    "[useCRMData] erro ao buscar conversas da API",
-                    err
-                );
+                console.error("[useCRMData] erro ao buscar conversas da API", err);
             }
         }
 
@@ -331,6 +370,37 @@ export function useCRMData() {
         ]);
     }
 
+    function moveConversationWorkspace(
+        conversationId: string,
+        targetWorkspace: "inbox" | "fantasma"
+    ) {
+        console.log("[WorkspacePersist] moveConversationWorkspace", {
+            conversationId,
+            targetWorkspace,
+        });
+
+        setConversations((prev) => {
+            const updated = prev.map((c) =>
+                c.id === conversationId
+                    ? {
+                        ...c,
+                        workspace: targetWorkspace,
+                    }
+                    : c
+            );
+
+            const currentOverrides = loadWorkspaceOverrides();
+            const newOverrides: WorkspaceOverrideMap = {
+                ...currentOverrides,
+                [conversationId]: targetWorkspace,
+            };
+
+            saveWorkspaceOverrides(newOverrides);
+
+            return updated;
+        });
+    }
+
     return {
         conversations,
         selectedConversationId,
@@ -343,5 +413,6 @@ export function useCRMData() {
         currentQuotes,
         selectedQuoteId,
         setSelectedQuoteId,
+        moveConversationWorkspace,
     };
 }

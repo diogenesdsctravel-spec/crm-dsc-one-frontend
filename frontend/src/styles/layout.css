@@ -1,0 +1,113 @@
+/* LAYOUT PRINCIPAL DO CRM */
+
+.app-container {
+    display: grid;
+    grid-template-columns: 320px 1fr 360px;
+    height: 100vh;
+    gap: 12px;
+    padding: 12px;
+    box-sizing: border-box;
+}
+
+/* COLUNAS */
+
+.panel {
+    background: #ffffff;
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+}
+
+.panel-header {
+    padding: 16px 18px 10px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.panel-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: rgb(15, 23, 42);
+}
+
+.panel-body {
+    flex: 1;
+    padding: 16px;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+/* TOP BAR */
+
+.topbar {
+    height: 64px;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg,
+            rgb(37, 99, 235),
+            rgb(59, 130, 246));
+    color: white;
+    border-radius: 18px;
+    margin-bottom: 12px;
+    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.35);
+}
+
+.topbar-left,
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* DOCK INFERIOR */
+
+.dock {
+    position: fixed;
+    left: 50%;
+    bottom: 18px;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(12px);
+    padding: 8px 18px;
+    border-radius: 999px;
+    display: flex;
+    gap: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    z-index: 50;
+}
+
+.dock-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 999px;
+    background: #f1f5f9;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* SCROLLBAR SUAVE */
+
+.panel-body::-webkit-scrollbar,
+.inbox-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.panel-body::-webkit-scrollbar-track,
+.inbox-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.panel-body::-webkit-scrollbar-thumb,
+.inbox-list::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.4);
+    border-radius: 999px;
+}

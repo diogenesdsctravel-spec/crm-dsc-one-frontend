@@ -1,0 +1,230 @@
+/* LEAD / COLUNA DO MEIO */
+
+.lead-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+    min-height: 0;
+}
+
+/* Tabs de cotações */
+
+.lead-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.lead-tab {
+    border-radius: 999px;
+    border: none;
+    padding: 6px 14px;
+    font-size: 12px;
+    cursor: pointer;
+    background: rgba(148, 163, 184, 0.15);
+    color: rgb(30, 64, 175);
+    font-weight: 500;
+}
+
+.lead-tab:hover {
+    background: rgba(59, 130, 246, 0.18);
+}
+
+.lead-tab-active {
+    background: rgb(59, 130, 246);
+    color: white;
+}
+
+.lead-tab-add {
+    background: white;
+    border: 1px dashed rgba(148, 163, 184, 0.9);
+    color: rgb(71, 85, 105);
+}
+
+/* Cartão principal do lead */
+
+.lead-card {
+    margin-top: 4px;
+    border-radius: 20px;
+    background: #f9fafb;
+    padding: 16px 18px 14px;
+    box-shadow: inset 0 0 0 1px rgba(203, 213, 225, 0.6);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.lead-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.lead-status-select {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.lead-status-pill {
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.7);
+    padding: 6px 12px;
+    background: white;
+    font-size: 11px;
+    font-weight: 500;
+    color: rgb(71, 85, 105);
+}
+
+.lead-status-pill.selected {
+    border-color: transparent;
+}
+
+/* Nome e valor */
+
+.lead-title-block {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.lead-name-input {
+    flex: 1;
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.7);
+    padding: 8px 14px;
+    font-size: 14px;
+}
+
+.lead-amount {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    font-size: 13px;
+}
+
+.lead-amount span {
+    color: rgb(148, 163, 184);
+}
+
+.lead-amount strong {
+    font-size: 15px;
+    font-weight: 700;
+    color: rgb(30, 64, 175);
+}
+
+/* Motivo de perda */
+
+.lead-perda-row {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.lead-perda-row label {
+    font-size: 12px;
+    color: rgb(107, 114, 128);
+}
+
+.lead-perda-row select {
+    max-width: 260px;
+}
+
+/* Barra de progresso */
+
+.lead-progress-bar {
+    width: 100%;
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(148, 163, 184, 0.15);
+    overflow: hidden;
+    margin-top: 12px;
+}
+
+.lead-progress-fill {
+    width: 100%;
+    height: 100%;
+}
+
+/* Corpo do formulário */
+
+.lead-body {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.lead-section h3 {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0 0 8px;
+}
+
+/* Grid de campos */
+
+.lead-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 12px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.field label {
+    font-size: 11px;
+    color: rgb(107, 114, 128);
+}
+
+/* container do autocomplete */
+
+.field-autocomplete {
+    position: relative;
+}
+
+/* dropdown de sugestões */
+
+.lead-suggestions {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-top: 4px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 12px;
+    border: 1px solid rgba(148, 163, 184, 0.6);
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
+    padding: 4px 0;
+    max-height: 260px;
+    overflow-y: auto;
+    z-index: 20;
+}
+
+.lead-suggestion-item {
+    padding: 10px 14px;
+    font-size: 14px;
+    line-height: 1.4;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.lead-suggestion-item:hover {
+    background-color: rgba(37, 99, 235, 0.08);
+}
+
+/* Rodapé */
+
+.lead-footer {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}

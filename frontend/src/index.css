@@ -1,4 +1,296 @@
-/* src/index.css */
+.tasks-overlay-backdrop {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.35);
+  backdrop-filter: blur(6px);
+  z-index: 40;
+}
+
+.tasks-overlay-panel {
+  width: 80vw;
+  max-width: 960px;
+  max-height: 80vh;
+  background: rgb(248, 250, 252);
+  border-radius: 28px;
+  padding: 24px 28px;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Cabeçalho */
+
+.tasks-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.tasks-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tasks-header-label {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgb(148, 163, 184);
+}
+
+.tasks-header-title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  color: rgb(15, 23, 42);
+}
+
+.tasks-header-subtitle {
+  margin: 0;
+  margin-top: 2px;
+  font-size: 14px;
+  color: rgb(100, 116, 139);
+}
+
+.tasks-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Toggle Dia / Semana / Mês / Ano */
+
+.tasks-view-toggle {
+  display: inline-flex;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgb(226, 232, 240);
+}
+
+.tasks-view-pill {
+  border: none;
+  background: transparent;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  color: rgb(71, 85, 105);
+  cursor: pointer;
+}
+
+.tasks-view-pill.is-active {
+  background: rgb(255, 255, 255);
+  color: rgb(37, 99, 235);
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.15);
+}
+
+.tasks-close-btn {
+  border: none;
+  background: rgba(148, 163, 184, 0.16);
+  color: rgb(51, 65, 85);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.tasks-close-btn:hover {
+  background: rgba(148, 163, 184, 0.28);
+}
+
+/* Corpo */
+
+.tasks-main {
+  flex: 1;
+  overflow: hidden;
+}
+
+.tasks-main-simple {
+  display: flex;
+  flex-direction: column;
+}
+
+.tasks-main-month {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.3fr);
+  gap: 16px;
+}
+
+/* Calendário */
+
+.tasks-calendar-panel {
+  background: rgb(255, 255, 255);
+  border-radius: 22px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.07);
+}
+
+.tasks-calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.tasks-calendar-month {
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: lowercase;
+  color: rgb(15, 23, 42);
+}
+
+.tasks-calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  font-size: 11px;
+  text-align: center;
+  color: rgb(148, 163, 184);
+  margin-bottom: 4px;
+}
+
+.tasks-calendar-weekday {
+  padding: 2px 0;
+}
+
+.tasks-calendar-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.tasks-calendar-week-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.tasks-calendar-day {
+  border: none;
+  background: transparent;
+  border-radius: 999px;
+  min-height: 30px;
+  padding: 2px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: rgb(30, 41, 59);
+  cursor: pointer;
+}
+
+.tasks-calendar-day.is-empty {
+  cursor: default;
+}
+
+.tasks-calendar-day-number {
+  line-height: 1.1;
+}
+
+.tasks-calendar-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  margin-top: 3px;
+  background: rgb(37, 99, 235);
+}
+
+.tasks-calendar-day.has-tasks {
+  color: rgb(15, 23, 42);
+}
+
+.tasks-calendar-day.is-selected {
+  background: rgba(37, 99, 235, 0.12);
+  color: rgb(37, 99, 235);
+}
+
+.tasks-calendar-day:hover:not(.is-empty) {
+  background: rgba(148, 163, 184, 0.16);
+}
+
+.tasks-calendar-footer {
+  border-top: 1px solid rgba(209, 213, 219, 0.9);
+  padding-top: 8px;
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+.tasks-calendar-footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 0;
+}
+
+.tasks-calendar-footer-label {
+  color: rgb(100, 116, 139);
+}
+
+.tasks-calendar-footer-value {
+  color: rgb(37, 99, 235);
+}
+
+/* Lista de tarefas (lado direito e visão Dia/Semana) */
+
+.tasks-list-panel {
+  background: rgb(255, 255, 255);
+  border-radius: 22px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.07);
+}
+
+.tasks-list-header {
+  margin-bottom: 6px;
+}
+
+.tasks-list-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: rgb(15, 23, 42);
+}
+
+.tasks-list-subtitle {
+  font-size: 13px;
+  color: rgb(148, 163, 184);
+}
+
+.tasks-list-divider {
+  height: 1px;
+  background: rgba(209, 213, 219, 0.9);
+  margin: 8px 0;
+}
+
+.tasks-list {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-right: 4px;
+}
+
+.tasks-list-item {
+  /* aqui entra o InboxCard já estilizado */
+}
+
+.tasks-empty {
+  font-size: 13px;
+  color: rgb(148, 163, 184);
+  padding: 16px 4px;
+  text-align: center;
+}
 
 html,
 body {
@@ -202,6 +494,18 @@ button.primary {
   align-items: center;
   gap: 18px;
   box-shadow: 0 14px 38px rgba(15, 23, 42, 0.6);
+}
+
+/* estado de drop ativo no Fantasma */
+
+.dock-item-drop-active {
+  background-color: rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
+}
+
+.dock-item-drop-active span:first-child {
+  font-weight: 600;
+  text-decoration: underline;
 }
 
 .dock button {
@@ -577,6 +881,47 @@ button.primary {
   color: rgb(107, 114, 128);
 }
 
+/* container do autocomplete, permite dropdown flutuante */
+.field-autocomplete {
+  position: relative;
+}
+
+/* caixa de sugestões (dropdown) */
+.lead-suggestions {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  background-color: rgb(255, 255, 255);
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
+  padding: 4px 0;
+  max-height: 260px;
+  overflow-y: auto;
+  z-index: 20;
+}
+
+/* cada item de sugestão */
+.lead-suggestion-item {
+  padding: 10px 14px;
+  font-size: 14px;
+  line-height: 1.4;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+/* hover elegante, estilo Apple */
+.lead-suggestion-item:hover {
+  background-color: rgba(37, 99, 235, 0.08);
+}
+
+/* primeira linha separada do input */
+.field-autocomplete input {
+  width: 100%;
+}
+
 .lead-footer {
   margin-top: 10px;
   display: flex;
@@ -856,6 +1201,7 @@ button.primary {
 }
 
 .chat-recording-send {
+  margin-left: 4px;
   width: 34px;
   height: 34px;
   border-radius: 999px;
@@ -1223,9 +1569,7 @@ button.primary {
   bottom: -2px;
   height: 3px;
   border-radius: 999px;
-  background: linear-gradient(to right,
-      rgb(59, 130, 246),
-      rgb(37, 99, 235));
+  background: linear-gradient(to right, rgb(59, 130, 246), rgb(37, 99, 235));
 }
 
 .contact-body {
@@ -1241,9 +1585,7 @@ button.primary {
   border-radius: 999px;
   border: none;
   padding: 12px 16px;
-  background: linear-gradient(to right,
-      rgb(59, 130, 246),
-      rgb(37, 99, 235));
+  background: linear-gradient(to right, rgb(59, 130, 246), rgb(37, 99, 235));
   color: #ffffff;
   font-size: 14px;
   font-weight: 500;
@@ -1431,4 +1773,200 @@ button.primary {
 
 .app-fantasma .inbox-item {
   box-shadow: none;
+}
+
+/* OVERLAY DO ESPAÇO FANTASMA */
+
+.fantasma-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 40;
+}
+
+.fantasma-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(9, 7, 125, 0.12);
+  backdrop-filter: blur(2px);
+  pointer-events: auto;
+}
+
+.fantasma-shell {
+  position: relative;
+  pointer-events: auto;
+  width: min(1120px, 100% - 48px);
+  height: min(640px, 100% - 48px);
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 22px 45px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.fantasma-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.fantasma-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.fantasma-subtitle {
+  font-size: 12px;
+  color: #666;
+}
+
+.fantasma-close {
+  border: none;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  background: #f3f4ff;
+  cursor: pointer;
+}
+
+.fantasma-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1.1fr 1.2fr 1.3fr;
+  gap: 0;
+  background: #f7f8ff;
+  padding: 12px;
+}
+
+.fantasma-column {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.fantasma-placeholder {
+  font-size: 12px;
+  color: #999;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* ===== Visão ANO – grade com 12 mini-calendários ===== */
+
+.tasks-main-year {
+  display: grid;
+  grid-template-columns: 1.4fr 1.6fr;
+  gap: 24px;
+  margin-top: 16px;
+}
+
+.tasks-year-panel {
+  background: rgb(248, 250, 252);
+  border-radius: 24px;
+  padding: 20px;
+}
+
+.tasks-year-header-row {
+  margin-bottom: 16px;
+}
+
+.tasks-year-big-label {
+  font-size: 28px;
+  font-weight: 700;
+  color: rgb(15, 23, 42);
+}
+
+/* grade 4 x 3 de meses */
+
+.tasks-year-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px 24px;
+}
+
+.tasks-year-month {
+  background: white;
+  border-radius: 18px;
+  padding: 10px 12px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+}
+
+.tasks-year-month-name {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: lowercase;
+  color: rgb(15, 23, 42);
+  margin-bottom: 4px;
+}
+
+/* cabeçalho DSTQQSS em mini */
+
+.tasks-year-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  font-size: 9px;
+  color: rgb(148, 163, 184);
+  text-align: center;
+  margin-bottom: 2px;
+}
+
+.tasks-year-weekday {
+  padding: 1px 0;
+}
+
+/* grade de dias do mês em miniatura */
+
+.tasks-year-month-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tasks-year-month-week-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.tasks-year-day {
+  min-height: 14px;
+  font-size: 9px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  color: rgb(15, 23, 42);
+}
+
+.tasks-year-day.is-empty {
+  opacity: 0;
+}
+
+.tasks-year-day-number {
+  line-height: 1;
+}
+
+.tasks-year-day-dot {
+  position: absolute;
+  bottom: -2px;
+  width: 3px;
+  height: 3px;
+  border-radius: 999px;
+  background: rgb(37, 99, 235);
+}
+
+.tasks-year-day.has-tasks .tasks-year-day-number {
+  font-weight: 600;
+  color: rgb(37, 99, 235);
 }

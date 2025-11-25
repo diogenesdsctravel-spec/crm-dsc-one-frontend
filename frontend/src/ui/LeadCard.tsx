@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 interface LeadCardProps {
     leads: any[];
@@ -42,14 +42,65 @@ const perdaMotivos = [
     { value: "concorrencia", label: "Concorrência" },
 ];
 
+const PRODUTOS_OPCOES = [
+    "Aéreo",
+    "Hotel",
+    "Resort",
+    "Transfer",
+    "Seguro Viagem",
+    "Aluguel de Veículo",
+    "Passeios",
+    "Ingressos em Orlando",
+    "Passagem Rodoviária",
+];
+
+const RESORTS_OPCOES = [
+    "Canabrava Resorts",
+    "Transamérica Ilha de Comandatuba",
+    "Coroa Vermelha",
+    "Náutico Mar",
+    "Resort Jardim Atlântico",
+    "Tororomba Resort",
+    "Iberostar Waves Bahia",
+    "Iberostar Selection",
+    "Sauípe",
+    "Grand Palladium",
+    "La Torre",
+    "Arraial Eco Resort",
+];
+
+function normalizarTexto(valor: string): string {
+    return valor.trim();
+}
+
+function parseLista(valor: string): string[] {
+    if (!valor) return [];
+    return valor
+        .split(/[;,]/)
+        .map((p) => normalizarTexto(p))
+        .filter(Boolean);
+}
+
+function extrairTermoBusca(valor: string): string {
+    const partes = valor.split(/[;,]/);
+    const ultimo = partes[partes.length - 1] || "";
+    return ultimo.trim();
+}
+
 export default function LeadCard({
     leads,
     selectedLeadId,
     onSelectLead,
 }: LeadCardProps) {
+    const [lastViewedLeadId, setLastViewedLeadId] = useState<string | null>(null);
+    const effectiveSelectedId = selectedLeadId ?? lastViewedLeadId;
+
     const lead = useMemo(
-        () => leads.find((l) => l.id === selectedLeadId) || leads[0],
-        [leads, selectedLeadId]
+        () =>
+            leads.find((l) => l.id === effectiveSelectedId) ||
+            leads[leads.length - 1] ||
+            leads[0],
+        [leads, effectiveSelectedId]
     );
 
     const [status, setStatus] = useState<FunilStatus>("QUALIFICACAO");
@@ -60,6 +111,61 @@ export default function LeadCard({
     const [childrenAges, setChildrenAges] = useState<number[]>(() =>
         Array.from({ length: initialChildren }, () => 0)
     );
+
+    const [produtoInputValue, setProdutoInputValue] = useState<string>("");
+    const [produtoFocused, setProdutoFocused] = useState(false);
+    const produtoInputRef = useRef<HTMLInputElement | null>(null);
+
+    const [resortInputValue, setResortInputValue] = useState<string>("");
+    const [resortFocused, setResortFocused] = useState(false);
+    const resortInputRef = useRef<HTMLInputElement | null>(null);
+
+    const [isNovaCotacao, setIsNovaCotacao] = useState(false);
+
+    useEffect(() => {
+        if (selectedLeadId) {
+            setLastViewedLeadId(selectedLeadId);
+        }
+    }, [selectedLeadId]);
+
+    useEffect(() => {
+        setIsNovaCotacao(false);
+        setProdutoInputValue("");
+        setResortInputValue("");
+    }, [lead]);
+
+    const produtosSelecionados = useMemo(
+        () => parseLista(produtoInputValue),
+        [produtoInputValue]
+    );
+
+    const hasResort = produtosSelecionados.some(
+        (p) => p.toLowerCase() === "resort"
+    );
+
+    const termoBuscaProdutos = extrairTermoBusca(produtoInputValue).toLowerCase();
+
+    const produtosSugeridos = useMemo(() => {
+        if (!produtoFocused || !termoBuscaProdutos) return [];
+        return PRODUTOS_OPCOES.filter((opcao) => {
+            const jaSelecionado = produtosSelecionados.some(
+                (p) => p.toLowerCase() === opcao.toLowerCase()
+            );
+            return (
+                !jaSelecionado &&
+                opcao.toLowerCase().includes(termoBuscaProdutos)
+            );
+        });
+    }, [produtoFocused, termoBuscaProdutos, produtosSelecionados]);
+
+    const termoBuscaResort = resortInputValue.trim().toLowerCase();
+
+    const resortsSugeridos = useMemo(() => {
+        if (!hasResort || !resortFocused || !termoBuscaResort) return [];
+        return RESORTS_OPCOES.filter((opcao) =>
+            opcao.toLowerCase().includes(termoBuscaResort)
+        );
+    }, [hasResort, resortFocused, termoBuscaResort]);
 
     const handleChildrenChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const next = Math.max(0, Number(e.target.value) || 0);
@@ -84,6 +190,57 @@ export default function LeadCard({
         });
     };
 
+    const handleSelecionarProduto = (opcao: string) => {
+        setProdutoInputValue((prev) => {
+            const tokens = parseLista(prev);
+            const busca = extrairTermoBusca(prev).toLowerCase();
+
+            const tokensSemDraft = tokens.filter(
+                (t) => t.toLowerCase() !== busca
+            );
+
+            const lowerOpcao = opcao.toLowerCase();
+            const semDuplicata = tokensSemDraft.filter(
+                (t) => t.toLowerCase() !== lowerOpcao
+            );
+
+            const novaLista = [...semDuplicata, opcao];
+
+            let texto = novaLista.join(", ");
+
+            if (!texto.endsWith(", ")) {
+                texto = texto + ", ";
+            }
+
+            return texto;
+        });
+
+        if (produtoInputRef.current) {
+            produtoInputRef.current.focus();
+        }
+    };
+
+    const handleBlurProdutos = () => {
+        setTimeout(() => {
+            setProdutoFocused(false);
+            setProdutoInputValue((prev) => parseLista(prev).join(", "));
+        }, 100);
+    };
+
+    const handleSelecionarResort = (opcao: string) => {
+        setResortInputValue(opcao);
+        if (resortInputRef.current) {
+            resortInputRef.current.focus();
+        }
+    };
+
+    const handleBlurResort = () => {
+        setTimeout(() => {
+            setResortFocused(false);
+            setResortInputValue((prev) => prev.trim());
+        }, 100);
+    };
+
     if (!lead) {
         return (
             <>
@@ -97,13 +254,13 @@ export default function LeadCard({
         );
     }
 
-    const origem = lead.origem || "Cidade de origem";
-    const destino = lead.destino || "Cidade de destino";
-    const checkin = lead.checkin || "";
-    const checkout = lead.checkout || "";
-    const adultos = lead.adultos ?? 0;
-    const criancas = lead.criancas ?? 0;
-    const valorCentavos = lead.valorCentavos ?? 0;
+    const origem = isNovaCotacao ? "" : (lead.origem || "Cidade de origem");
+    const destino = isNovaCotacao ? "" : (lead.destino || "Cidade de destino");
+    const checkin = isNovaCotacao ? "" : (lead.checkin || "");
+    const checkout = isNovaCotacao ? "" : (lead.checkout || "");
+    const adultos = isNovaCotacao ? 0 : (lead.adultos ?? 0);
+    const criancas = isNovaCotacao ? 0 : (lead.criancas ?? 0);
+    const valorCentavos = isNovaCotacao ? 0 : (lead.valorCentavos ?? 0);
     const valorBRL = (valorCentavos / 100).toFixed(2).replace(".", ",");
 
     return (
@@ -112,7 +269,9 @@ export default function LeadCard({
                 <div className="panel-title">
                     <span className="panel-title-main">Lead</span>
                     <span className="panel-title-sub">
-                        {lead.titulo || "Sem título definido"}
+                        {isNovaCotacao
+                            ? "Nova cotação"
+                            : lead.titulo || "Sem título definido"}
                     </span>
                 </div>
             </div>
@@ -124,9 +283,14 @@ export default function LeadCard({
                             key={l.id}
                             type="button"
                             className={
-                                "lead-tab" + (l.id === lead.id ? " lead-tab-active" : "")
+                                "lead-tab" + (l.id === lead.id && !isNovaCotacao
+                                    ? " lead-tab-active"
+                                    : "")
                             }
-                            onClick={() => onSelectLead(l.id)}
+                            onClick={() => {
+                                setIsNovaCotacao(false);
+                                onSelectLead(l.id);
+                            }}
                         >
                             {l.titulo || l.nome || "Sem título"}
                         </button>
@@ -134,14 +298,28 @@ export default function LeadCard({
 
                     <button
                         type="button"
-                        className="lead-tab lead-tab-add"
-                        onClick={() => alert("Novo lead (mock)")}
+                        className={
+                            "lead-tab lead-tab-add" +
+                            (isNovaCotacao ? " lead-tab-active" : "")
+                        }
+                        onClick={() => {
+                            setIsNovaCotacao(true);
+                            setStatus("QUALIFICACAO");
+                            setMotivoPerda("");
+                            setChildrenCount(0);
+                            setChildrenAges([]);
+                            setProdutoInputValue("");
+                            setResortInputValue("");
+                        }}
                     >
                         + Nova cotação
                     </button>
                 </div>
 
-                <article className="lead-card">
+                <article
+                    key={isNovaCotacao ? "nova" : lead.id}
+                    className="lead-card"
+                >
                     <header className="lead-header">
                         <div className="lead-header-top">
                             <div className="lead-funnel-row">
@@ -209,22 +387,31 @@ export default function LeadCard({
                             <div className="lead-grid">
                                 <div className="field">
                                     <label>Origem</label>
-                                    <input defaultValue={origem} placeholder="Cidade de origem" />
+                                    <input
+                                        defaultValue={isNovaCotacao ? "" : origem}
+                                        placeholder="Cidade de origem"
+                                    />
                                 </div>
                                 <div className="field">
                                     <label>Destino</label>
                                     <input
-                                        defaultValue={destino}
+                                        defaultValue={isNovaCotacao ? "" : destino}
                                         placeholder="Cidade de destino"
                                     />
                                 </div>
                                 <div className="field">
                                     <label>Check-in</label>
-                                    <input type="date" defaultValue={checkin} />
+                                    <input
+                                        type="date"
+                                        defaultValue={isNovaCotacao ? "" : checkin}
+                                    />
                                 </div>
                                 <div className="field">
                                     <label>Check-out</label>
-                                    <input type="date" defaultValue={checkout} />
+                                    <input
+                                        type="date"
+                                        defaultValue={isNovaCotacao ? "" : checkout}
+                                    />
                                 </div>
                             </div>
                         </section>
@@ -235,7 +422,11 @@ export default function LeadCard({
                             <div className="lead-grid">
                                 <div className="field">
                                     <label>Adultos</label>
-                                    <input type="number" min={0} defaultValue={adultos} />
+                                    <input
+                                        type="number"
+                                        min={0}
+                                        defaultValue={isNovaCotacao ? "" : adultos}
+                                    />
                                 </div>
 
                                 <div className="field">
@@ -278,10 +469,70 @@ export default function LeadCard({
 
                         <section className="lead-section">
                             <h3>Produtos</h3>
-                            <input
-                                placeholder="Ex.: Aéreo, hotel, pacote…"
-                                defaultValue={lead.produtos || ""}
-                            />
+
+                            <div className="field field-autocomplete">
+                                <label>Produtos</label>
+
+                                <input
+                                    ref={produtoInputRef}
+                                    placeholder="Ex.: Aéreo, hotel, pacote…"
+                                    value={produtoInputValue}
+                                    onChange={(e) => setProdutoInputValue(e.target.value)}
+                                    onFocus={() => setProdutoFocused(true)}
+                                    onBlur={handleBlurProdutos}
+                                />
+
+                                {produtosSugeridos.length > 0 && (
+                                    <div className="lead-suggestions">
+                                        {produtosSugeridos.map((opcao) => (
+                                            <div
+                                                key={opcao}
+                                                className="lead-suggestion-item"
+                                                onMouseDown={(e) => {
+                                                    e.preventDefault();
+                                                    handleSelecionarProduto(opcao);
+                                                }}
+                                            >
+                                                {opcao}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+
+                            {hasResort && (
+                                <div
+                                    className="field field-autocomplete"
+                                    style={{ marginTop: 16 }}
+                                >
+                                    <label>Resort</label>
+                                    <input
+                                        ref={resortInputRef}
+                                        placeholder="Digite ou selecione o resort"
+                                        value={resortInputValue}
+                                        onChange={(e) => setResortInputValue(e.target.value)}
+                                        onFocus={() => setResortFocused(true)}
+                                        onBlur={handleBlurResort}
+                                    />
+
+                                    {resortsSugeridos.length > 0 && (
+                                        <div className="lead-suggestions">
+                                            {resortsSugeridos.map((opcao) => (
+                                                <div
+                                                    key={opcao}
+                                                    className="lead-suggestion-item"
+                                                    onMouseDown={(e) => {
+                                                        e.preventDefault();
+                                                        handleSelecionarResort(opcao);
+                                                    }}
+                                                >
+                                                    {opcao}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </section>
                     </div>
 
