@@ -267,16 +267,28 @@ const TasksOverlay: React.FC<TasksOverlayProps> = ({
         );
     }
 
-    // AJUSTE: visão de ANO usando o mesmo "shell" visual de duas colunas
+    // Visão de ANO – 2 meses por linha + scroll, sem repetir o título 2025
     function renderYear() {
         return (
             <div className="tasks-main tasks-main-year">
-                <div className="tasks-year-panel">
-                    <div className="tasks-year-header-row">
-                        <span className="tasks-year-big-label">{currentYear}</span>
-                    </div>
+                <div
+                    className="tasks-year-panel"
+                    style={{
+                        maxHeight: 520,
+                        overflowY: "auto",
+                    }}
+                >
+                    {/* removido o subtítulo interno "2025" para não repetir o título do overlay */}
 
-                    <div className="tasks-year-grid">
+                    <div
+                        className="tasks-year-grid"
+                        style={{
+                            display: "grid",
+                            gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                            gap: "18px 22px",
+                            marginTop: 4,
+                        }}
+                    >
                         {monthsIndexes.map((monthIndex) => {
                             const monthNameShort = new Date(currentYear, monthIndex, 1)
                                 .toLocaleDateString("pt-BR", { month: "short" })
@@ -304,7 +316,9 @@ const TasksOverlay: React.FC<TasksOverlayProps> = ({
                                             >
                                                 {week.map((day, colIndex) => {
                                                     const isEmpty = !day;
-                                                    const hasTasks = !!(day && daysWithTasksSet.has(day));
+                                                    const hasTasks = !!(
+                                                        day && daysWithTasksSet.has(day)
+                                                    );
 
                                                     let className = "tasks-year-day";
                                                     if (isEmpty) className += " is-empty";
