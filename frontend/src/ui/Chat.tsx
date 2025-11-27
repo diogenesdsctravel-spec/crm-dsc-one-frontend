@@ -38,6 +38,9 @@ interface ChatProps {
     onSendMessage?: (body: string) => void;
 
     onOpenContact?: () => void;
+
+    // Callback chamado após criar task com sucesso na API
+    onCreateTask?: (date: string, text: string, time?: string) => void;
 }
 
 type MockAttachment = {
@@ -55,6 +58,7 @@ export default function Chat({
     onSend,
     onSendMessage,
     onOpenContact,
+    onCreateTask,
 }: ChatProps) {
     const bodyRef = useRef<HTMLDivElement | null>(null);
 
@@ -293,7 +297,11 @@ export default function Chat({
                                 title,
                                 dueDate: date,
                             });
-                            // se quiser, depois a gente pode plugar um reload de tarefas aqui
+
+                            // Notifica o App.tsx para atualizar o estado local
+                            if (onCreateTask) {
+                                onCreateTask(date, title);
+                            }
                         } catch (err) {
                             console.error("Erro ao criar tarefa", err);
                             alert("Erro ao salvar tarefa");

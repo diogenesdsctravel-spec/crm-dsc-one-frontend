@@ -18,6 +18,9 @@ export type InboxCardProps = {
     conversationId: string,
     fromWorkspace: string
   ) => void;
+  // Props opcionais para override (usadas no TasksOverlay)
+  overrideTitle?: string;
+  overrideSubtitle?: string;
 };
 
 export function InboxCard({
@@ -25,9 +28,18 @@ export function InboxCard({
   selected,
   onClick,
   onDragStart,
+  overrideTitle,
+  overrideSubtitle,
 }: InboxCardProps) {
   const initial = conversation.nome?.trim()?.[0]?.toUpperCase() || "C";
   const hasUnread = (conversation.unreadCount ?? 0) > 0;
+
+  // Usa override se fornecido, senão usa valor padrão
+  const displayTitle = overrideTitle ?? conversation.nome;
+  const displaySubtitle =
+    overrideSubtitle ??
+    conversation.ultimaMensagem ??
+    "Última mensagem de exemplo…";
 
   return (
     <button
@@ -63,10 +75,8 @@ export function InboxCard({
       </div>
 
       <div className="inbox-text">
-        <div className="inbox-name">{conversation.nome}</div>
-        <div className="inbox-last">
-          {conversation.ultimaMensagem || "Última mensagem de exemplo…"}
-        </div>
+        <div className="inbox-name">{displayTitle}</div>
+        <div className="inbox-last">{displaySubtitle}</div>
       </div>
     </button>
   );

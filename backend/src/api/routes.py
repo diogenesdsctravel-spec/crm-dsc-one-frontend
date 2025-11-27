@@ -14,6 +14,12 @@ class TaskCreate(BaseModel):
     dueDate: datetime
 
 
+class TaskUpdate(BaseModel):
+    status: Optional[str] = None
+    title: Optional[str] = None
+    dueDate: Optional[datetime] = None
+
+
 mock_conversations: List[Dict] = [
     {
         "id": "conv_1",
@@ -144,12 +150,17 @@ def get_contact(contact_id: str):
 
 
 @router.get("/tasks")
-def list_tasks(conversationId: Optional[str] = None, status: Optional[str] = None):
-    if conversationId is None:
-        raise HTTPException(status_code=400, detail="conversationId is required")
+def list_tasks(
+    conversationId: Optional[str] = None,
+    status: Optional[str] = None
+):
+    items = mock_tasks
 
-    items = [t for t in mock_tasks if t["conversationId"] == conversationId]
+    # Filtro por conversationId (agora opcional)
+    if conversationId is not None:
+        items = [t for t in items if t["conversationId"] == conversationId]
 
+    # Filtro por status
     if status is not None:
         items = [t for t in items if t["status"] == status]
 
@@ -172,3 +183,48 @@ def create_task(payload: TaskCreate):
 
     mock_tasks.append(task)
     return task
+
+
+@router.patch("/tasks/{task_id}")
+def update_task(task_id: str, payload: TaskUpdate):
+    # Encontra a task pelo ID
+    task = None
+    for t in mock_tasks:
+        if t["id"] == task_id:
+            task = t
+            break
+
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    # Atualiza apenas os campos enviados
+    if payload.status is not None:
+        task["status"] = payload.status
+
+    if payload.title is not None:
+        task["title"] = payload.title
+
+    if payload.dueDate is not None:
+        task["dueDate"] = payload.dueDate.isoformat()
+
+    task["updatedAt"] = datetime.utcnow().isoformat() + "Z"
+
+    return task
+
+
+@router.delete("/tasks/{task_id}", status_code=204)
+def delete_task(task_id: str):
+    # Encontra o índice da task
+    task_index = None
+    for i, t in enumerate(mock_tasks):
+        if t["id"] == task_id:
+            task_index = i
+            break
+
+    if task_index is None:
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    # Remove a task
+    mock_tasks.pop(task_index)
+
+    return None

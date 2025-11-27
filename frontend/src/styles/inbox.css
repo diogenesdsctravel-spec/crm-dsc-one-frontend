@@ -25,6 +25,8 @@
 }
 
 .inbox-item {
+    position: relative;
+    /* IMPORTANTE: para posicionar os botões */
     display: flex;
     align-items: center;
     gap: 14px;
@@ -101,6 +103,105 @@
     text-overflow: ellipsis;
     overflow: hidden;
 }
+
+/* =============================================
+   BOTÕES DE AÇÃO (hover 3s) - DENTRO DO CARD
+   ============================================= */
+
+.inbox-item-actions {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    z-index: 5;
+    animation: inboxActionsFadeIn 0.2s ease;
+}
+
+@keyframes inboxActionsFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.inbox-action-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+    transition: all 0.15s ease;
+}
+
+/* Botão confirmar (verde) */
+.inbox-action-complete {
+    background: #22c55e;
+    color: #fff;
+}
+
+.inbox-action-complete:hover {
+    background: #16a34a;
+    transform: scale(1.1);
+}
+
+/* Botão excluir (vermelho) */
+.inbox-action-delete {
+    background: #ef4444;
+    color: #fff;
+}
+
+.inbox-action-delete:hover {
+    background: #dc2626;
+    transform: scale(1.1);
+}
+
+/* Botão cancelar (cinza) */
+.inbox-action-cancel {
+    background: #94a3b8;
+    color: #fff;
+}
+
+.inbox-action-cancel:hover {
+    background: #64748b;
+    transform: scale(1.1);
+}
+
+/* Confirmação de exclusão */
+.inbox-item-confirm {
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 4px 8px;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.inbox-confirm-text {
+    font-size: 11px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.inbox-item-confirm .inbox-action-btn {
+    width: auto;
+    height: 22px;
+    padding: 0 8px;
+    font-size: 10px;
+    border-radius: 11px;
+}
+
+/* ============================================= */
 
 /* CSS adicional para painel Inbox em layout antigo */
 
