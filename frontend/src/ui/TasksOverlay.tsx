@@ -27,6 +27,7 @@ type TasksOverlayProps = {
     daysWithTasks?: number[];
     selectedDay?: number;
     onSelectDay?: (day: number) => void;
+    onOpenConversationFromTask?: (conversationId: string) => void;
 };
 
 const TasksOverlay: React.FC<TasksOverlayProps> = ({
@@ -40,6 +41,7 @@ const TasksOverlay: React.FC<TasksOverlayProps> = ({
     onCompleteTask,
     onDeleteTask,
     periodLabel,
+    onOpenConversationFromTask,
 }) => {
     console.log("[overlay-tasks]", tasks);
     if (!isOpen) return null;
@@ -273,6 +275,7 @@ const TasksOverlay: React.FC<TasksOverlayProps> = ({
                 emptyMessage={emptyMessage}
                 onCompleteTask={onCompleteTask}
                 onDeleteTask={onDeleteTask}
+                onOpenConversationFromTask={onOpenConversationFromTask}
             />
         );
     }
@@ -343,6 +346,7 @@ const TasksOverlay: React.FC<TasksOverlayProps> = ({
                         rightPanelSubtitle={rightPanelSubtitle()}
                         onCompleteTask={onCompleteTask}
                         onDeleteTask={onDeleteTask}
+                        onOpenConversationFromTask={onOpenConversationFromTask}
                     />
                 ) : showMonthLayout ? (
                     <TasksMonthView
@@ -364,6 +368,7 @@ const TasksOverlay: React.FC<TasksOverlayProps> = ({
                         conversations={conversations}
                         onCompleteTask={onCompleteTask}
                         onDeleteTask={onDeleteTask}
+                        onOpenConversationFromTask={onOpenConversationFromTask}
                     />
                 ) : (
                     renderListOnly()

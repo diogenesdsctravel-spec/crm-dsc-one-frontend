@@ -183,6 +183,29 @@ export default function App() {
     />
   ));
 
+  // Atalho: abrir conversa a partir da tarefa (voltando para o workspace de origem)
+  const handleOpenConversationFromTask = useCallback(
+    (conversationId: string) => {
+      const conv = conversations.find((c) => c.id === conversationId);
+      const workspace: Workspace =
+        (conv?.workspace as Workspace) || "inbox";
+
+      // garante que a conversa esteja selecionada na camada de dados
+      selectConversation(conversationId);
+
+      if (workspace === "fantasma") {
+        setShowFantasma(true);
+        setSelectedFantasmaId(conversationId);
+      } else {
+        setShowFantasma(false);
+      }
+
+      // fecha o painel de tarefas
+      setShowTasks(false);
+    },
+    [conversations, selectConversation]
+  );
+
   return (
     <div
       className={
@@ -429,9 +452,12 @@ export default function App() {
           onChangeViewMode={setTasksViewMode}
           taskCards={taskCards}
           tasks={tasksForOverlay}
-          conversations={inboxConversations}
+          // passa TODAS as conversas para o overlay (inbox + fantasma),
+          // assim ele consegue achar a origem correta pelo conversationId
+          conversations={conversations}
           onCompleteTask={handleCompleteTask}
           onDeleteTask={handleDeleteTask}
+          onOpenConversationFromTask={handleOpenConversationFromTask}
         />
       )}
     </div>

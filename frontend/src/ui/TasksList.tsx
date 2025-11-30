@@ -6,10 +6,11 @@ import { parseLocalDate, isTaskOverdue } from "./tasksDateHelpers";
 
 type TasksListProps = {
     tasks: Task[];
-    conversations?: Conversation[]; // agora opcional
+    conversations?: Conversation[];
     emptyMessage: string;
     onCompleteTask?: (taskId: string) => void;
     onDeleteTask?: (taskId: string) => void;
+    onOpenConversationFromTask?: (conversationId: string) => void;
 };
 
 interface TaskCardWithHoverProps {
@@ -20,6 +21,7 @@ interface TaskCardWithHoverProps {
     onComplete: () => void;
     onDelete: () => void;
     isOverdue?: boolean;
+    onOpenConversationFromTask?: (conversationId: string) => void;
 }
 
 function TaskCardWithHover({
@@ -30,6 +32,7 @@ function TaskCardWithHover({
     onComplete,
     onDelete,
     isOverdue,
+    onOpenConversationFromTask,
 }: TaskCardWithHoverProps) {
     const [showActions, setShowActions] = useState(false);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -76,11 +79,21 @@ function TaskCardWithHover({
         setShowDeleteConfirm(false);
     }, []);
 
+    const handleOpenConversation = useCallback(
+        (e: React.MouseEvent) => {
+            e.stopPropagation();
+            if (!onOpenConversationFromTask) return;
+            onOpenConversationFromTask(conversation.id);
+        },
+        [onOpenConversationFromTask, conversation.id]
+    );
+
     return (
         <div
             className="task-card-wrapper"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
+            onDoubleClick={handleOpenConversation}
         >
             <InboxCard
                 conversation={conversation}
@@ -182,6 +195,7 @@ export function TasksList({
     emptyMessage,
     onCompleteTask,
     onDeleteTask,
+    onOpenConversationFromTask,
 }: TasksListProps) {
     if (tasks.length === 0) {
         return <div className="tasks-empty">{emptyMessage}</div>;
@@ -213,6 +227,7 @@ export function TasksList({
                         onComplete={() => onCompleteTask?.(task.id)}
                         onDelete={() => onDeleteTask?.(task.id)}
                         isOverdue={overdue}
+                        onOpenConversationFromTask={onOpenConversationFromTask}
                     />
                 );
             })}

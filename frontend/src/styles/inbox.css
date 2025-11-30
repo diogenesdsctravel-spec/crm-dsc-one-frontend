@@ -124,7 +124,6 @@
     align-items: center;
     gap: 4px;
     z-index: 5;
-    animation: inboxActionsFadeIn 0.2s ease;
 }
 
 @keyframes inboxActionsFadeIn {
@@ -319,14 +318,18 @@
     text-align: center;
 }
 
-/* Ícone de tarefa atrasada no canto superior direito do card */
+/* SLOT FIXO + ÍCONE DE TAREFA ATRASADA */
+.inbox-warning-slot {
+    width: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
 .inbox-overdue-badge {
-    position: absolute;
-    top: 8px;
-    right: 2px;
     font-size: 14px;
     line-height: 1;
-    z-index: 6;
 }
 
 /* Força o subtítulo completo só nos cards de tarefa */

@@ -74,11 +74,14 @@ export function InboxCard({
           : undefined
       }
     >
-      {isOverdue && (
-        <span className="inbox-overdue-badge" title="Tarefa atrasada">
-          ⚠️
-        </span>
-      )}
+      {/* SLOT FIXO PARA O ÍCONE – mantém alinhamento com ou sem atraso */}
+      <span className="inbox-warning-slot">
+        {isOverdue && (
+          <span className="inbox-overdue-badge" title="Tarefa atrasada">
+            ⚠️
+          </span>
+        )}
+      </span>
 
       <div className="inbox-avatar">
         {conversation.avatarUrl ? (

@@ -19,6 +19,7 @@ type TasksYearViewProps = {
     rightPanelSubtitle: string;
     onCompleteTask?: (taskId: string) => void;
     onDeleteTask?: (taskId: string) => void;
+    onOpenConversationFromTask?: (conversationId: string) => void;
 };
 
 const TasksYearView: React.FC<TasksYearViewProps> = ({
@@ -32,6 +33,7 @@ const TasksYearView: React.FC<TasksYearViewProps> = ({
     rightPanelSubtitle,
     onCompleteTask,
     onDeleteTask,
+    onOpenConversationFromTask,
 }) => {
     return (
         <div className="tasks-main tasks-main-year">
@@ -132,6 +134,7 @@ const TasksYearView: React.FC<TasksYearViewProps> = ({
                         }
                         onCompleteTask={onCompleteTask}
                         onDeleteTask={onDeleteTask}
+                        onOpenConversationFromTask={onOpenConversationFromTask}
                     />
                 </div>
             </div>

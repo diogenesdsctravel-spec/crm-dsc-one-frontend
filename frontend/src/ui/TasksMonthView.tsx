@@ -23,6 +23,7 @@ type TasksMonthViewProps = {
     conversations: Conversation[];
     onCompleteTask?: (taskId: string) => void;
     onDeleteTask?: (taskId: string) => void;
+    onOpenConversationFromTask?: (conversationId: string) => void;
 };
 
 const TasksMonthView: React.FC<TasksMonthViewProps> = ({
@@ -41,6 +42,7 @@ const TasksMonthView: React.FC<TasksMonthViewProps> = ({
     conversations,
     onCompleteTask,
     onDeleteTask,
+    onOpenConversationFromTask,
 }) => {
     const monthGrid = React.useMemo(
         () => buildMonthGrid(currentYear, currentMonthIndex),
@@ -105,7 +107,9 @@ const TasksMonthView: React.FC<TasksMonthViewProps> = ({
                                         type="button"
                                         className={className}
                                         onClick={() =>
-                                            onSelectDate(new Date(currentYear, currentMonthIndex, day))
+                                            onSelectDate(
+                                                new Date(currentYear, currentMonthIndex, day)
+                                            )
                                         }
                                     >
                                         <span className="tasks-calendar-day-number">{day}</span>
@@ -146,6 +150,7 @@ const TasksMonthView: React.FC<TasksMonthViewProps> = ({
                         }
                         onCompleteTask={onCompleteTask}
                         onDeleteTask={onDeleteTask}
+                        onOpenConversationFromTask={onOpenConversationFromTask}
                     />
                 </div>
             </div>
