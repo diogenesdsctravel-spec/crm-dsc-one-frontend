@@ -1,3 +1,4 @@
+// src/App.tsx
 import React, { useState, useEffect, useCallback } from "react";
 
 import { useCRMData } from "./hooks/useCRMData";
@@ -190,7 +191,6 @@ export default function App() {
       const workspace: Workspace =
         (conv?.workspace as Workspace) || "inbox";
 
-      // garante que a conversa esteja selecionada na camada de dados
       selectConversation(conversationId);
 
       if (workspace === "fantasma") {
@@ -200,10 +200,21 @@ export default function App() {
         setShowFantasma(false);
       }
 
-      // fecha o painel de tarefas
       setShowTasks(false);
     },
     [conversations, selectConversation]
+  );
+
+  // Regra suprema: GANHO ou PERDA => manda conversa para o Espaço Fantasma
+  const handleFinalizeLead = useCallback(
+    (status: "GANHO" | "PERDA") => {
+      if (!selectedConversationId) return;
+
+      moveConversationWorkspace(selectedConversationId, "fantasma");
+      setShowFantasma(true);
+      setSelectedFantasmaId(selectedConversationId);
+    },
+    [selectedConversationId, moveConversationWorkspace]
   );
 
   return (
@@ -238,6 +249,8 @@ export default function App() {
             leads={currentQuotes}
             selectedLeadId={selectedQuoteId}
             onSelectLead={setSelectedQuoteId}
+            mode="inbox"
+            onFinalizeLead={handleFinalizeLead}
           />
         </section>
 
@@ -400,6 +413,7 @@ export default function App() {
                       activeFantasmaConversation.quotes[0]?.id ?? null
                     }
                     onSelectLead={() => { }}
+                    mode="fantasma"
                   />
                 ) : (
                   <div className="fantasma-placeholder">
@@ -452,8 +466,6 @@ export default function App() {
           onChangeViewMode={setTasksViewMode}
           taskCards={taskCards}
           tasks={tasksForOverlay}
-          // passa TODAS as conversas para o overlay (inbox + fantasma),
-          // assim ele consegue achar a origem correta pelo conversationId
           conversations={conversations}
           onCompleteTask={handleCompleteTask}
           onDeleteTask={handleDeleteTask}

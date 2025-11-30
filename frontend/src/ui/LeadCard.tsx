@@ -1,18 +1,30 @@
+// src/ui/LeadCard.tsx
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
-interface LeadCardProps {
-    leads: any[];
-    selectedLeadId: string | null;
-    onSelectLead: (id: string) => void;
-}
-
-type FunilStatus =
+export type FunilStatus =
     | "QUALIFICACAO"
     | "PROPOSTA_ENVIADA"
     | "EM_FECHAMENTO"
     | "GANHO"
     | "PERDA";
+
+interface LeadCardProps {
+    leads: any[];
+    selectedLeadId: string | null;
+    onSelectLead: (id: string) => void;
+
+    // novo: contexto de uso do LeadCard
+    // inbox => sempre começa em "Nova cotação" limpa
+    // fantasma => começa mostrando a última cotação (histórico)
+    mode?: "inbox" | "fantasma";
+
+    // novo: chamado quando o vendedor finaliza (GANHO / PERDA)
+    onFinalizeLead?: (status: FunilStatus) => void;
+
+    // já existia no App, deixamos opcional para compatibilidade
+    clientName?: string;
+}
 
 const statusLabel: Record<FunilStatus, string> = {
     QUALIFICACAO: "Qualificação",
@@ -91,6 +103,8 @@ export default function LeadCard({
     leads,
     selectedLeadId,
     onSelectLead,
+    mode = "inbox",
+    onFinalizeLead,
 }: LeadCardProps) {
     const [lastViewedLeadId, setLastViewedLeadId] = useState<string | null>(null);
     const effectiveSelectedId = selectedLeadId ?? lastViewedLeadId;
@@ -120,7 +134,8 @@ export default function LeadCard({
     const [resortFocused, setResortFocused] = useState(false);
     const resortInputRef = useRef<HTMLInputElement | null>(null);
 
-    const [isNovaCotacao, setIsNovaCotacao] = useState(false);
+    // novo: controla se estamos na aba "+ Nova cotação"
+    const [isNovaCotacao, setIsNovaCotacao] = useState(mode === "inbox");
 
     useEffect(() => {
         if (selectedLeadId) {
@@ -128,11 +143,17 @@ export default function LeadCard({
         }
     }, [selectedLeadId]);
 
+    // quando muda o lead ou o modo (inbox/fantasma), resetamos campos básicos
     useEffect(() => {
-        setIsNovaCotacao(false);
+        setIsNovaCotacao(mode === "inbox");
         setProdutoInputValue("");
         setResortInputValue("");
-    }, [lead]);
+        setStatus("QUALIFICACAO");
+        setMotivoPerda("");
+        const criancasBase = lead?.criancas ?? 0;
+        setChildrenCount(criancasBase);
+        setChildrenAges(Array.from({ length: criancasBase }, () => 0));
+    }, [lead, mode]);
 
     const produtosSelecionados = useMemo(
         () => parseLista(produtoInputValue),
@@ -241,7 +262,7 @@ export default function LeadCard({
         }, 100);
     };
 
-    if (!lead) {
+    if (!lead && !isNovaCotacao) {
         return (
             <>
                 <div className="panel-header">
@@ -254,13 +275,13 @@ export default function LeadCard({
         );
     }
 
-    const origem = isNovaCotacao ? "" : (lead.origem || "Cidade de origem");
-    const destino = isNovaCotacao ? "" : (lead.destino || "Cidade de destino");
-    const checkin = isNovaCotacao ? "" : (lead.checkin || "");
-    const checkout = isNovaCotacao ? "" : (lead.checkout || "");
-    const adultos = isNovaCotacao ? 0 : (lead.adultos ?? 0);
-    const criancas = isNovaCotacao ? 0 : (lead.criancas ?? 0);
-    const valorCentavos = isNovaCotacao ? 0 : (lead.valorCentavos ?? 0);
+    const origem = isNovaCotacao ? "" : (lead?.origem || "Cidade de origem");
+    const destino = isNovaCotacao ? "" : (lead?.destino || "Cidade de destino");
+    const checkin = isNovaCotacao ? "" : (lead?.checkin || "");
+    const checkout = isNovaCotacao ? "" : (lead?.checkout || "");
+    const adultos = isNovaCotacao ? 0 : (lead?.adultos ?? 0);
+    const criancas = isNovaCotacao ? 0 : (lead?.criancas ?? 0);
+    const valorCentavos = isNovaCotacao ? 0 : (lead?.valorCentavos ?? 0);
     const valorBRL = (valorCentavos / 100).toFixed(2).replace(".", ",");
 
     return (
@@ -271,7 +292,7 @@ export default function LeadCard({
                     <span className="panel-title-sub">
                         {isNovaCotacao
                             ? "Nova cotação"
-                            : lead.titulo || "Sem título definido"}
+                            : lead?.titulo || "Sem título definido"}
                     </span>
                 </div>
             </div>
@@ -283,7 +304,8 @@ export default function LeadCard({
                             key={l.id}
                             type="button"
                             className={
-                                "lead-tab" + (l.id === lead.id && !isNovaCotacao
+                                "lead-tab" +
+                                (l.id === lead?.id && !isNovaCotacao
                                     ? " lead-tab-active"
                                     : "")
                             }
@@ -317,7 +339,7 @@ export default function LeadCard({
                 </div>
 
                 <article
-                    key={isNovaCotacao ? "nova" : lead.id}
+                    key={isNovaCotacao ? "nova" : lead?.id}
                     className="lead-card"
                 >
                     <header className="lead-header">
@@ -331,6 +353,12 @@ export default function LeadCard({
                                         setStatus(next);
                                         if (next !== "PERDA") {
                                             setMotivoPerda("");
+                                        }
+                                        // Regra suprema agora é automática:
+                                        // se o vendedor marcar GANHO ou PERDA,
+                                        // já disparamos onFinalizeLead sem precisar clicar em "Salvar".
+                                        if (next === "GANHO" || next === "PERDA") {
+                                            onFinalizeLead && onFinalizeLead(next);
                                         }
                                     }}
                                 >
@@ -350,7 +378,9 @@ export default function LeadCard({
 
                             <div className="lead-amount">
                                 <span>R$</span>
-                                <strong>{valorBRL === "0,00" ? "Sem valor" : valorBRL}</strong>
+                                <strong>
+                                    {valorBRL === "0,00" ? "Sem valor" : valorBRL}
+                                </strong>
                             </div>
                         </div>
 
@@ -536,22 +566,7 @@ export default function LeadCard({
                         </section>
                     </div>
 
-                    <footer className="lead-footer">
-                        <button
-                            type="button"
-                            className="ghost"
-                            onClick={() => alert("Cancelar (mock)")}
-                        >
-                            Cancelar
-                        </button>
-                        <button
-                            type="button"
-                            className="primary"
-                            onClick={() => alert("Salvar (mock)")}
-                        >
-                            Salvar
-                        </button>
-                    </footer>
+                    {/* Rodapé removido – não existem mais botões Cancelar / Salvar */}
                 </article>
             </div>
         </>

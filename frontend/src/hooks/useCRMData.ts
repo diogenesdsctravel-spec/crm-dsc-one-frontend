@@ -284,7 +284,8 @@ export function useCRMData() {
 
     const [selectedQuoteId, setSelectedQuoteId] = useState<string | null>(() => {
         const firstConv = conversations[0];
-        const firstQuote = firstConv && firstConv.quotes && firstConv.quotes[0];
+        const firstQuote =
+            firstConv && firstConv.quotes && firstConv.quotes[0];
         return firstQuote ? firstQuote.id : null;
     });
 
@@ -296,7 +297,7 @@ export function useCRMData() {
     );
 
     const currentQuotes = useMemo(
-        () => (selectedConversation && selectedConversation.quotes) || [],
+        () => (selectedConversation?.quotes ?? []),
         [selectedConversation]
     );
 
@@ -312,7 +313,9 @@ export function useCRMData() {
 
         async function loadMessages() {
             try {
-                const apiMessages = await fetchMessages(selectedConversationId);
+                const apiMessages = await fetchMessages(
+                    selectedConversationId
+                );
                 if (cancelled) return;
 
                 const mapped: Message[] = apiMessages.map((m) => ({
@@ -344,7 +347,9 @@ export function useCRMData() {
         setSelectedConversationId(id);
         const conv = conversations.find((c) => c.id === id);
         const firstQuote =
-            conv && conv.quotes && conv.quotes.length > 0 ? conv.quotes[0] : null;
+            conv && conv.quotes && conv.quotes.length > 0
+                ? conv.quotes[0]
+                : null;
         setSelectedQuoteId(firstQuote ? firstQuote.id : null);
     }
 
@@ -389,30 +394,100 @@ export function useCRMData() {
                     : c
             );
 
-            const currentOverrides = loadWorkspaceOverrides();
-            const newOverrides: WorkspaceOverrideMap = {
-                ...currentOverrides,
+            const overrides = loadWorkspaceOverrides();
+            saveWorkspaceOverrides({
+                ...overrides,
                 [conversationId]: targetWorkspace,
-            };
-
-            saveWorkspaceOverrides(newOverrides);
+            });
 
             return updated;
         });
     }
+
+    // ============================================================
+    //   NOVAS FUNÇÕES BIG TECH — AUTOSAVE + HISTÓRICO + REVIVER
+    // ============================================================
+
+    function updateCurrentQuote(field: keyof Quote, value: any) {
+        setConversations((prev) =>
+            prev.map((c) => {
+                if (c.id !== selectedConversationId) return c;
+
+                const updatedQuotes = c.quotes.map((q) =>
+                    q.id === selectedQuoteId ? { ...q, [field]: value } : q
+                );
+
+                return { ...c, quotes: updatedQuotes };
+            })
+        );
+    }
+
+    function createNewQuote() {
+        const newQuote: Quote = {
+            id: "q-" + Date.now(),
+            titulo: "Nova cotação",
+            origem: "",
+            destino: "",
+            produtos: "",
+            valorCentavos: 0,
+            adultos: 0,
+            criancas: 0,
+        };
+
+        setConversations((prev) =>
+            prev.map((c) =>
+                c.id === selectedConversationId
+                    ? { ...c, quotes: [...c.quotes, newQuote] }
+                    : c
+            )
+        );
+
+        setSelectedQuoteId(newQuote.id);
+    }
+
+    function finalizeCurrentQuote(status: "GANHO" | "PERDA") {
+        // Regra suprema: sempre fantasma
+        moveConversationWorkspace(selectedConversationId, "fantasma");
+
+        // Apenas registra o ganho/perda dentro da quote
+        if (selectedQuoteId) {
+            updateCurrentQuote("titulo", status === "GANHO" ? "Ganho" : "Perda");
+        }
+    }
+
+    function reviveConversation(conversationId: string) {
+        moveConversationWorkspace(conversationId, "inbox");
+
+        // cria cotação nova ao reviver
+        if (conversationId === selectedConversationId) {
+            createNewQuote();
+        }
+    }
+
+    // ==========================
+    // RETORNO DO HOOK
+    // ==========================
 
     return {
         conversations,
         selectedConversationId,
         selectConversation,
         selectedConversation,
+
         messages,
         composer,
         setComposer,
         sendMessage,
+
         currentQuotes,
         selectedQuoteId,
         setSelectedQuoteId,
+
         moveConversationWorkspace,
+
+        updateCurrentQuote,
+        createNewQuote,
+        finalizeCurrentQuote,
+        reviveConversation,
     };
 }
