@@ -61,6 +61,7 @@ interface TaskCardWithHoverProps {
     subtitle: string;
     onComplete: () => void;
     onDelete: () => void;
+    isOverdue?: boolean;
 }
 
 function TaskCardWithHover({
@@ -70,6 +71,7 @@ function TaskCardWithHover({
     subtitle,
     onComplete,
     onDelete,
+    isOverdue,
 }: TaskCardWithHoverProps) {
     const [showActions, setShowActions] = useState(false);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -130,6 +132,8 @@ function TaskCardWithHover({
                 onClick={() => { }}
                 overrideTitle={title}
                 overrideSubtitle={subtitle}
+                isOverdue={isOverdue}
+                subtitleVariant="full"
             />
 
             {showActions && !showDeleteConfirm && (
@@ -168,7 +172,7 @@ function TaskCardWithHover({
                         type="button"
                         className="task-action-btn task-action-cancel"
                         onClick={handleDeleteCancel}
-                        title="Cancelar"
+                        title="Cancelar exclusão"
                     >
                         Não
                     </button>
@@ -245,6 +249,18 @@ function endOfWeek(date: Date): Date {
     d.setDate(d.getDate() + 6);
     d.setHours(23, 59, 59, 999);
     return d;
+}
+
+// NOVO: regra para saber se a task está atrasada
+function isTaskOverdue(task: Task): boolean {
+    if (!task.date) return false;
+    const taskDate = parseLocalDate(task.date);
+    if (!taskDate) return false;
+
+    const today = startOfDay(new Date());
+    const taskDay = startOfDay(taskDate);
+
+    return taskDay < today;
 }
 
 // ========================================
@@ -511,6 +527,7 @@ const TasksOverlay: React.FC<TasksOverlayProps> = ({
 
             const when = formatTaskDateTime(task);
             const title = when ? `${conv.nome} · ${when}` : conv.nome;
+            const overdue = isTaskOverdue(task);
 
             return (
                 <TaskCardWithHover
@@ -521,6 +538,7 @@ const TasksOverlay: React.FC<TasksOverlayProps> = ({
                     subtitle={task.text}
                     onComplete={() => onCompleteTask?.(task.id)}
                     onDelete={() => onDeleteTask?.(task.id)}
+                    isOverdue={overdue}
                 />
             );
         });
@@ -560,7 +578,10 @@ const TasksOverlay: React.FC<TasksOverlayProps> = ({
             return (
                 <div className="tasks-main tasks-main-simple">
                     <div className="tasks-list">
-                        {renderTaskList(tasksForThisWeek, "Nenhuma tarefa para esta semana")}
+                        {renderTaskList(
+                            tasksForThisWeek,
+                            "Nenhuma tarefa para esta semana"
+                        )}
                     </div>
                 </div>
             );

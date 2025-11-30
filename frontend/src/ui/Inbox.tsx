@@ -18,9 +18,10 @@ export type InboxCardProps = {
     conversationId: string,
     fromWorkspace: string
   ) => void;
-  // Props opcionais para override (usadas no TasksOverlay)
   overrideTitle?: string;
   overrideSubtitle?: string;
+  isOverdue?: boolean;
+  subtitleVariant?: "default" | "full";
 };
 
 export function InboxCard({
@@ -30,16 +31,27 @@ export function InboxCard({
   onDragStart,
   overrideTitle,
   overrideSubtitle,
+  isOverdue,
+  subtitleVariant = "default",
 }: InboxCardProps) {
   const initial = conversation.nome?.trim()?.[0]?.toUpperCase() || "C";
   const hasUnread = (conversation.unreadCount ?? 0) > 0;
 
-  // Usa override se fornecido, senão usa valor padrão
   const displayTitle = overrideTitle ?? conversation.nome;
   const displaySubtitle =
     overrideSubtitle ??
     conversation.ultimaMensagem ??
     "Última mensagem de exemplo…";
+
+  const subtitleStyle: React.CSSProperties | undefined =
+    subtitleVariant === "full"
+      ? {
+        whiteSpace: "normal",
+        overflow: "visible",
+        textOverflow: "unset",
+        maxWidth: "none",
+      }
+      : undefined;
 
   return (
     <button
@@ -62,6 +74,12 @@ export function InboxCard({
           : undefined
       }
     >
+      {isOverdue && (
+        <span className="inbox-overdue-badge" title="Tarefa atrasada">
+          ⚠️
+        </span>
+      )}
+
       <div className="inbox-avatar">
         {conversation.avatarUrl ? (
           <img
@@ -76,7 +94,9 @@ export function InboxCard({
 
       <div className="inbox-text">
         <div className="inbox-name">{displayTitle}</div>
-        <div className="inbox-last">{displaySubtitle}</div>
+        <div className="inbox-last" style={subtitleStyle}>
+          {displaySubtitle}
+        </div>
       </div>
     </button>
   );

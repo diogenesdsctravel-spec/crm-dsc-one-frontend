@@ -26,7 +26,7 @@
 
 .inbox-item {
     position: relative;
-    /* IMPORTANTE: para posicionar os botões */
+    /* pai relativo para o badge e botões */
     display: flex;
     align-items: center;
     gap: 14px;
@@ -102,6 +102,14 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+}
+
+/* subtítulo em modo "full" (sem corte, quebra em várias linhas) */
+.inbox-last-full {
+    max-width: none;
+    white-space: normal;
+    text-overflow: unset;
+    overflow: visible;
 }
 
 /* =============================================
@@ -200,8 +208,6 @@
     font-size: 10px;
     border-radius: 11px;
 }
-
-/* ============================================= */
 
 /* CSS adicional para painel Inbox em layout antigo */
 
@@ -311,4 +317,22 @@
     align-items: center;
     justify-content: center;
     text-align: center;
+}
+
+/* Ícone de tarefa atrasada no canto superior direito do card */
+.inbox-overdue-badge {
+    position: absolute;
+    top: 8px;
+    right: 2px;
+    font-size: 14px;
+    line-height: 1;
+    z-index: 6;
+}
+
+/* Força o subtítulo completo só nos cards de tarefa */
+.task-card-wrapper .inbox-last-full {
+    max-width: none;
+    white-space: normal;
+    text-overflow: unset;
+    overflow: visible;
 }
