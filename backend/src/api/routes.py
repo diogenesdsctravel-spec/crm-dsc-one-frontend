@@ -12,12 +12,14 @@ class TaskCreate(BaseModel):
     conversationId: str
     title: str
     dueDate: datetime
+    time: Optional[str] = None  # ← ADICIONADO
 
 
 class TaskUpdate(BaseModel):
     status: Optional[str] = None
     title: Optional[str] = None
     dueDate: Optional[datetime] = None
+    time: Optional[str] = None  # ← ADICIONADO
 
 
 mock_conversations: List[Dict] = [
@@ -33,7 +35,7 @@ mock_conversations: List[Dict] = [
     },
     {
         "id": "conv_2",
-            "contactId": "contact_2",
+        "contactId": "contact_2",
         "contactName": "Maria Souza",
         "lastMessagePreview": "Obrigada, vou ver com meu marido",
         "lastMessageAt": "2025-11-18T10:20:00Z",
@@ -98,6 +100,7 @@ mock_tasks: List[Dict] = [
         "conversationId": "conv_1",
         "title": "Cobrar resposta da cotação Buenos Aires",
         "dueDate": "2025-11-20T15:00:00Z",
+        "time": "15:00",  # ← ADICIONADO (exemplo)
         "status": "pending",
         "createdBy": "user_1",
         "createdAt": "2025-11-19T14:10:00Z",
@@ -181,6 +184,10 @@ def create_task(payload: TaskCreate):
         "createdAt": datetime.utcnow().isoformat() + "Z",
     }
 
+    # ← ADICIONADO: salvar time se fornecido
+    if payload.time:
+        task["time"] = payload.time
+
     mock_tasks.append(task)
     return task
 
@@ -206,6 +213,10 @@ def update_task(task_id: str, payload: TaskUpdate):
 
     if payload.dueDate is not None:
         task["dueDate"] = payload.dueDate.isoformat()
+
+    # ← ADICIONADO: atualizar time se fornecido
+    if payload.time is not None:
+        task["time"] = payload.time
 
     task["updatedAt"] = datetime.utcnow().isoformat() + "Z"
 

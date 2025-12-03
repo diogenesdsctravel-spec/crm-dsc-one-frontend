@@ -181,8 +181,7 @@ export default function App() {
   const handleOpenConversationFromTask = useCallback(
     (conversationId: string) => {
       const conv = conversations.find((c) => c.id === conversationId);
-      const workspace: Workspace =
-        (conv?.workspace as Workspace) || "inbox";
+      const workspace: Workspace = (conv?.workspace as Workspace) || "inbox";
 
       selectConversation(conversationId);
 
