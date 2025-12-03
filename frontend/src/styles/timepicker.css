@@ -1,0 +1,170 @@
+/* ========= TIMEPICKER UNIVERSAL ========= */
+
+.timepicker {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.timepicker-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.timepicker-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: rgb(100, 116, 139);
+    text-align: center;
+}
+
+.timepicker-window {
+    position: relative;
+    border-radius: 20px;
+    background: rgb(249, 250, 251);
+    box-shadow:
+        inset 0 0 0 1px rgba(203, 213, 225, 0.9),
+        0 8px 20px rgba(15, 23, 42, 0.06);
+    overflow: hidden;
+}
+
+/* Faixa central de destaque */
+.timepicker-highlight {
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    top: 50%;
+    height: 44px;
+    transform: translateY(-50%);
+    border-radius: 999px;
+    background: rgba(148, 163, 184, 0.14);
+    box-shadow:
+        0 0 0 1px rgba(148, 163, 184, 0.32),
+        0 6px 16px rgba(15, 23, 42, 0.18);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Lista com scroll - IMPORTANTE: padding de 88px (2 * 44px) */
+.timepicker-list {
+    position: relative;
+    max-height: 220px;
+    /* 5 items * 44px */
+    margin: 0;
+    padding: 88px 0;
+    /* 2 items de espaço acima e abaixo */
+    list-style: none;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+}
+
+/* Scrollbar discreta */
+.timepicker-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.timepicker-list::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.45);
+    border-radius: 999px;
+}
+
+/* Item individual */
+.timepicker-item {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 500;
+    color: rgba(55, 65, 81, 0.4);
+    cursor: pointer;
+    transition:
+        color 120ms ease,
+        transform 120ms ease;
+    user-select: none;
+}
+
+.timepicker-item:hover {
+    color: rgb(37, 99, 235);
+}
+
+/* Item ativo (centralizado na faixa) */
+.timepicker-item--active {
+    color: rgb(15, 23, 42);
+    font-weight: 600;
+    transform: scale(1.05);
+}
+
+/* Separador entre horas e minutos */
+.timepicker-separator {
+    align-self: center;
+    font-size: 20px;
+    font-weight: 600;
+    color: rgb(148, 163, 184);
+    margin-top: 20px;
+}
+
+/* ========= INTEGRAÇÃO COM CALENDÁRIO ========= */
+
+.calendar-time-section {
+    margin-top: 8px;
+    padding: 14px 14px 18px;
+    border-radius: 20px;
+    background: #f9fafb;
+    box-shadow:
+        inset 0 0 0 1px rgba(203, 213, 225, 0.9),
+        0 10px 30px rgba(15, 23, 42, 0.08);
+}
+
+.calendar-time-label {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #0f172a;
+}
+
+/* ========= INTEGRAÇÃO COM TASKS OVERLAY ========= */
+
+.tasks-overlay-timepicker-panel {
+    margin-top: 4px;
+    padding: 14px 16px 18px;
+    border-radius: 22px;
+    background: rgb(249, 250, 251);
+    box-shadow:
+        inset 0 0 0 1px rgba(203, 213, 225, 0.9),
+        0 10px 30px rgba(15, 23, 42, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tasks-overlay-timepicker-title {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 13px;
+    color: rgb(15, 23, 42);
+}
+
+.tasks-overlay-timepicker-title span:first-child {
+    font-weight: 600;
+}
+
+.tasks-overlay-timepicker-hint {
+    font-size: 12px;
+    color: rgb(148, 163, 184);
+}
+
+.tasks-overlay-timepicker-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.tasks-overlay-timepicker-caption {
+    font-size: 12px;
+    color: rgb(100, 116, 139);
+}

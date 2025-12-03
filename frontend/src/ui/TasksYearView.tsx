@@ -6,7 +6,7 @@ import {
     WEEKDAY_SHORT,
     buildMonthGrid,
     formatDateKey,
-} from "./tasksCalendarHelpers";
+} from "./tasksHelpers";
 
 type TasksYearViewProps = {
     currentYear: number;

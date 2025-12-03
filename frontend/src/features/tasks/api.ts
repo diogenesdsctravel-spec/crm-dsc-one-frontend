@@ -1,5 +1,3 @@
-// src/features/tasks/api.ts
-
 import { apiUrl } from "../../services/config";
 
 export type Task = {
@@ -7,6 +5,7 @@ export type Task = {
     conversationId: string;
     title: string;
     dueDate: string;
+    time?: string;  // ← ADICIONADO
     status: string;
     createdBy?: string;
     createdAt?: string;
@@ -56,6 +55,7 @@ export async function createTask(input: {
     conversationId: string;
     title: string;
     dueDate: string;
+    time?: string;  // ← ADICIONADO
 }): Promise<Task> {
     const url = apiUrl("/api/tasks");
 
@@ -75,13 +75,14 @@ export async function createTask(input: {
     return data;
 }
 
-// Atualiza uma task (status, title, dueDate)
+// Atualiza uma task (status, title, dueDate, time)
 export async function updateTask(
     taskId: string,
     updates: {
         status?: string;
         title?: string;
         dueDate?: string;
+        time?: string;  // ← ADICIONADO
     }
 ): Promise<Task> {
     const url = apiUrl(`/api/tasks/${encodeURIComponent(taskId)}`);

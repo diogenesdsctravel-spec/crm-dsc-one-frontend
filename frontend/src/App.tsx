@@ -10,7 +10,6 @@ import TasksOverlay from "./ui/TasksOverlay";
 import type { TasksViewMode } from "./ui/TasksOverlay";
 import { fetchAllTasks, updateTask, deleteTask } from "./features/tasks/api";
 
-// Tipo Task local (alinhado com a API)
 type Task = {
   id: string;
   conversationId: string;
@@ -20,7 +19,6 @@ type Task = {
   time?: string;
 };
 
-// Tipo adaptado para o TasksOverlay
 type TaskForOverlay = {
   id: string;
   date: string;
@@ -60,17 +58,14 @@ export default function App() {
   });
 
   const [showTasks, setShowTasks] = useState(false);
-  const [tasksViewMode, setTasksViewMode] = useState<TasksViewMode>("month");
+  const [tasksViewMode, setTasksViewMode] = useState<TasksViewMode>("day");
 
-  // Estado de tasks (carregadas da API)
   const [tasks, setTasks] = useState<Task[]>([]);
   const [tasksLoading, setTasksLoading] = useState(false);
 
-  // Carrega tasks da API ao montar
   const loadTasks = useCallback(async () => {
     setTasksLoading(true);
     try {
-      // Busca apenas tasks pendentes
       const apiTasks = await fetchAllTasks("pending");
       setTasks(apiTasks);
     } catch (err) {
@@ -84,10 +79,15 @@ export default function App() {
     loadTasks();
   }, [loadTasks]);
 
-  // Converte tasks da API para o formato do TasksOverlay
+  useEffect(() => {
+    if (showTasks) {
+      setTasksViewMode("day");
+    }
+  }, [showTasks]);
+
   const tasksForOverlay: TaskForOverlay[] = tasks.map((t) => ({
     id: t.id,
-    date: t.dueDate.slice(0, 10), // YYYY-MM-DD
+    date: t.dueDate.slice(0, 10),
     text: t.title,
     conversationId: t.conversationId,
     time: t.time,
@@ -115,17 +115,13 @@ export default function App() {
     setIsDraggingFantasma(false);
   }
 
-  // Função para adicionar task ao estado local (após criar na API)
   function handleCreateTask(date: string, text: string, time?: string) {
-    // Recarrega da API para garantir sincronização
     loadTasks();
   }
 
-  // Função para marcar task como concluída
   async function handleCompleteTask(taskId: string) {
     try {
       await updateTask(taskId, { status: "completed" });
-      // Remove do estado local (ou recarrega)
       setTasks((prev) => prev.filter((t) => t.id !== taskId));
     } catch (err) {
       console.error("Erro ao concluir tarefa:", err);
@@ -133,11 +129,9 @@ export default function App() {
     }
   }
 
-  // Função para excluir task
   async function handleDeleteTask(taskId: string) {
     try {
       await deleteTask(taskId);
-      // Remove do estado local
       setTasks((prev) => prev.filter((t) => t.id !== taskId));
     } catch (err) {
       console.error("Erro ao excluir tarefa:", err);
@@ -184,7 +178,6 @@ export default function App() {
     />
   ));
 
-  // Atalho: abrir conversa a partir da tarefa (voltando para o workspace de origem)
   const handleOpenConversationFromTask = useCallback(
     (conversationId: string) => {
       const conv = conversations.find((c) => c.id === conversationId);
@@ -205,7 +198,6 @@ export default function App() {
     [conversations, selectConversation]
   );
 
-  // Regra suprema: GANHO ou PERDA => manda conversa para o Espaço Fantasma
   const handleFinalizeLead = useCallback(
     (status: "GANHO" | "PERDA") => {
       if (!selectedConversationId) return;

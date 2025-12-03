@@ -282,7 +282,8 @@ export default function Chat({
             {showCalendar && (
                 <CalendarPicker
                     onClose={() => setShowCalendar(false)}
-                    onSelectDate={async (date: string) => {
+                    // CalendarPicker devolve date + time (hora escolhida)
+                    onSelectDate={async (date: string, time?: string) => {
                         if (!convId) {
                             setShowCalendar(false);
                             return;
@@ -290,17 +291,19 @@ export default function Chat({
 
                         try {
                             const title =
-                                pendingTaskText.trim() || "Tarefa de acompanhamento";
+                                pendingTaskText.trim() ||
+                                "Tarefa de acompanhamento";
 
                             await createTask({
                                 conversationId: convId,
                                 title,
                                 dueDate: date,
+                                time,
                             });
 
                             // Notifica o App.tsx para atualizar o estado local
                             if (onCreateTask) {
-                                onCreateTask(date, title);
+                                onCreateTask(date, title, time);
                             }
                         } catch (err) {
                             console.error("Erro ao criar tarefa", err);

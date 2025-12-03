@@ -10,8 +10,10 @@ import {
     startOfDay,
     startOfWeek,
     endOfWeek,
-} from "./tasksDateHelpers";
-import { formatDateKey } from "./tasksCalendarHelpers";
+    isTaskOverdue,
+    formatDateKey,
+} from "./tasksHelpers";
+import TimePicker from "./TimePicker";
 
 type TasksOverlayProps = {
     isOpen: boolean;
@@ -53,10 +55,12 @@ const TasksOverlay: React.FC<TasksOverlayProps> = ({
     const [hasUserSelectedDate, setHasUserSelectedDate] = useState(false);
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
+
     React.useEffect(() => {
         if (!isOpen) {
             setHasUserSelectedDate(false);
             setSelectedDate(null);
+            setSelectedTime("12:00");
         }
     }, [isOpen]);
 
@@ -100,6 +104,16 @@ const TasksOverlay: React.FC<TasksOverlayProps> = ({
         });
 
         return valid;
+    }, [tasks]);
+
+    const overdueTasks = useMemo(() => {
+        const all = tasks.filter((t) => isTaskOverdue(t));
+        all.sort((a, b) => {
+            const aTime = parseLocalDate(a.date)?.getTime() ?? 0;
+            const bTime = parseLocalDate(b.date)?.getTime() ?? 0;
+            return aTime - bTime;
+        });
+        return all;
     }, [tasks]);
 
     const upcomingTasksThisMonth = useMemo(() => {
@@ -221,6 +235,7 @@ const TasksOverlay: React.FC<TasksOverlayProps> = ({
         if (viewMode === "day") return "Hoje";
         if (viewMode === "week") return "Semana";
         if (viewMode === "month") return monthLabel;
+        if (viewMode === "overdue") return "Atrasadas";
         return String(currentYear);
     }
 
@@ -241,6 +256,12 @@ const TasksOverlay: React.FC<TasksOverlayProps> = ({
             return totalTasks === 1
                 ? "Você tem uma tarefa neste mês"
                 : `Você tem ${totalTasks} tarefas neste mês`;
+        }
+        if (viewMode === "overdue") {
+            const count = overdueTasks.length;
+            if (count === 0) return "Você não tem tarefas atrasadas. 🎯";
+            if (count === 1) return "Você tem 1 tarefa atrasada";
+            return `Você tem ${count} tarefas atrasadas`;
         }
         return totalTasks === 1
             ? "Você tem uma tarefa neste ano"
@@ -276,6 +297,7 @@ const TasksOverlay: React.FC<TasksOverlayProps> = ({
                 onCompleteTask={onCompleteTask}
                 onDeleteTask={onDeleteTask}
                 onOpenConversationFromTask={onOpenConversationFromTask}
+                viewMode={viewMode}  // ← ADICIONADO
             />
         );
     }
@@ -285,7 +307,10 @@ const TasksOverlay: React.FC<TasksOverlayProps> = ({
             return (
                 <div className="tasks-main tasks-main-simple">
                     <div className="tasks-list">
-                        {renderTaskList(tasksForToday, "Nenhuma tarefa para hoje")}
+                        {renderTaskList(
+                            tasksForToday,
+                            "Nenhuma tarefa para hoje"
+                        )}
                     </div>
                 </div>
             );
@@ -304,11 +329,26 @@ const TasksOverlay: React.FC<TasksOverlayProps> = ({
             );
         }
 
+        if (viewMode === "overdue") {
+            return (
+                <div className="tasks-main tasks-main-simple">
+                    <div className="tasks-list">
+                        {renderTaskList(
+                            overdueTasks,
+                            "Você não tem tarefas atrasadas. 🎯"
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
         return (
             <div className="tasks-main tasks-main-simple">
                 <div className="tasks-list">
                     {taskCards.length === 0 ? (
-                        <div className="tasks-empty">Nenhuma tarefa para este período</div>
+                        <div className="tasks-empty">
+                            Nenhuma tarefa para este período
+                        </div>
                     ) : (
                         taskCards.map((card, index) => (
                             <div key={index} className="tasks-list-item">

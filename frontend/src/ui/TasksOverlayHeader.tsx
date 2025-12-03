@@ -14,6 +14,7 @@ const VIEW_MODE_LABEL: Record<TasksViewMode, string> = {
     week: "Semana",
     month: "Mês",
     year: "Ano",
+    overdue: "Atrasadas",
 };
 
 export function TasksOverlayHeader({
@@ -33,7 +34,9 @@ export function TasksOverlayHeader({
 
             <div className="tasks-header-right">
                 <div className="tasks-view-toggle">
-                    {(["day", "week", "month", "year"] as TasksViewMode[]).map((mode) => (
+                    {(
+                        ["day", "week", "month", "year", "overdue"] as TasksViewMode[]
+                    ).map((mode) => (
                         <button
                             key={mode}
                             type="button"

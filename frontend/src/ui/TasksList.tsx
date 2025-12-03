@@ -2,7 +2,7 @@
 import React, { useState, useRef, useCallback } from "react";
 import { InboxCard } from "./Inbox";
 import type { Task, Conversation } from "./tasksTypes";
-import { parseLocalDate, isTaskOverdue } from "./tasksDateHelpers";
+import { parseLocalDate, isTaskOverdue } from "./tasksHelpers";
 
 type TasksListProps = {
     tasks: Task[];
@@ -11,6 +11,7 @@ type TasksListProps = {
     onCompleteTask?: (taskId: string) => void;
     onDeleteTask?: (taskId: string) => void;
     onOpenConversationFromTask?: (conversationId: string) => void;
+    viewMode?: "day" | "week" | "all";
 };
 
 interface TaskCardWithHoverProps {
@@ -22,6 +23,7 @@ interface TaskCardWithHoverProps {
     onDelete: () => void;
     isOverdue?: boolean;
     onOpenConversationFromTask?: (conversationId: string) => void;
+    viewMode?: "day" | "week" | "all";
 }
 
 function TaskCardWithHover({
@@ -33,6 +35,7 @@ function TaskCardWithHover({
     onDelete,
     isOverdue,
     onOpenConversationFromTask,
+    viewMode,
 }: TaskCardWithHoverProps) {
     const [showActions, setShowActions] = useState(false);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -88,6 +91,10 @@ function TaskCardWithHover({
         [onOpenConversationFromTask, conversation.id]
     );
 
+    // ← ADICIONAR AQUI
+    const isCompact = viewMode === "day" || viewMode === "week";
+    console.log("🔍 viewMode:", viewMode, "→ compact:", isCompact);
+
     return (
         <div
             className="task-card-wrapper"
@@ -103,6 +110,7 @@ function TaskCardWithHover({
                 overrideSubtitle={subtitle}
                 isOverdue={isOverdue}
                 subtitleVariant="full"
+                compact={isCompact}  // ← USA A VARIÁVEL
             />
 
             {showActions && !showDeleteConfirm && (
@@ -196,7 +204,10 @@ export function TasksList({
     onCompleteTask,
     onDeleteTask,
     onOpenConversationFromTask,
+    viewMode,
 }: TasksListProps) {
+    console.log("viewMode recebido:", viewMode);  // ← DEBUG
+
     if (tasks.length === 0) {
         return <div className="tasks-empty">{emptyMessage}</div>;
     }
@@ -228,6 +239,7 @@ export function TasksList({
                         onDelete={() => onDeleteTask?.(task.id)}
                         isOverdue={overdue}
                         onOpenConversationFromTask={onOpenConversationFromTask}
+                        viewMode={viewMode}
                     />
                 );
             })}

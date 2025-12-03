@@ -1,4 +1,4 @@
-export type TasksViewMode = "day" | "week" | "month" | "year";
+export type TasksViewMode = "day" | "week" | "month" | "year" | "overdue";
 
 export type Task = {
     id: string;

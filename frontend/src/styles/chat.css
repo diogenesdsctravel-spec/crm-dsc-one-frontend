@@ -1,3 +1,55 @@
+/* Header do chat tipo WhatsApp */
+
+.chat-header {
+    padding: 10px 18px 12px;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.chat-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.chat-header-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    overflow: hidden;
+    background: #3b82f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 16px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.chat-header-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.chat-header-texts {
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-header-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.chat-header-sub {
+    font-size: 12px;
+    color: #6b7280;
+}
+
 /* CHAT / TERCEIRA COLUNA */
 
 .chat-wrapper {
@@ -91,58 +143,6 @@
     opacity: 0.7;
 }
 
-/* Header do chat tipo WhatsApp: foto + nome */
-
-.chat-header {
-    padding: 10px 18px 12px;
-    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
-}
-
-.chat-header-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-}
-
-.chat-header-avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 999px;
-    overflow: hidden;
-    background: #3b82f6;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #ffffff;
-    font-weight: 600;
-    font-size: 16px;
-    flex-shrink: 0;
-    cursor: pointer;
-}
-
-.chat-header-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.chat-header-texts {
-    display: flex;
-    flex-direction: column;
-}
-
-.chat-header-name {
-    font-size: 14px;
-    font-weight: 600;
-    color: #0f172a;
-}
-
-.chat-header-sub {
-    font-size: 12px;
-    color: #6b7280;
-}
-
 /* Barra de envio estilo WhatsApp */
 
 .chat-input {
@@ -170,7 +170,7 @@
     color: #9ca3af;
 }
 
-/* Botões de ícone à esquerda (+ e emoji) */
+/* Botões de ícone */
 
 .chat-icon-btn {
     width: 32px;
@@ -185,13 +185,13 @@
     padding: 0 10px;
 }
 
+/* ícones SVG dentro dos botões */
+
 .chat-icon-btn svg {
     width: 20px;
     height: 20px;
     color: #111827;
 }
-
-/* Botão de microfone à direita */
 
 .chat-mic-btn {
     width: 34px;
@@ -211,8 +211,6 @@
     height: 20px;
     color: #111827;
 }
-
-/* Botão de envio (quando tem texto) */
 
 .chat-send-btn {
     width: 40px;
@@ -235,7 +233,7 @@
     color: #ffffff;
 }
 
-/* Barra de gravação mock (modo áudio) */
+/* Barra de gravação */
 
 .chat-recording-bar {
     margin-top: 12px;
@@ -296,7 +294,7 @@
     font-size: 16px;
 }
 
-/* faixa de miniaturas de anexos, igual barra de pré-visualização */
+/* Anexos */
 
 .chat-attachments-strip {
     display: flex;
@@ -304,8 +302,6 @@
     gap: 8px;
     padding: 8px 18px 4px;
 }
-
-/* cada quadradinho de anexo */
 
 .chat-attach-thumb {
     position: relative;
@@ -336,8 +332,6 @@
     font-size: 20px;
 }
 
-/* botão de remover (X) no canto do anexo */
-
 .chat-attach-remove {
     position: absolute;
     top: -6px;
@@ -354,8 +348,6 @@
     cursor: pointer;
 }
 
-/* tile com + para adicionar mais anexos */
-
 .chat-attach-plus {
     border-style: dashed;
     background: transparent;
@@ -363,7 +355,7 @@
     font-size: 24px;
 }
 
-/* menu flutuante de anexo (folha + “Anexar”) */
+/* menu flutuante de anexo */
 
 .chat-attach-menu {
     position: absolute;
@@ -409,4 +401,270 @@
 .chat-attach-menu-label {
     font-weight: 500;
     color: rgb(15, 23, 42);
+}
+
+/* PAINEL LATERAL DO CONTATO */
+
+.contact-panel-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: flex-end;
+    background: rgba(0, 0, 0, 0.12);
+    z-index: 40;
+}
+
+.contact-panel {
+    width: 320px;
+    max-width: 100vw;
+    background: rgb(255, 255, 255);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 40px rgba(15, 23, 42, 0.25);
+    border-radius: 24px 0 0 24px;
+}
+
+.contact-panel-header {
+    padding: 24px 24px 16px;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.contact-panel-close {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    border: none;
+    background: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.contact-panel-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 999px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    background: rgb(59, 130, 246);
+    color: rgb(255, 255, 255);
+    font-weight: 600;
+    font-size: 24px;
+}
+
+.contact-panel-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.contact-panel-title {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.contact-panel-title strong {
+    font-size: 18px;
+}
+
+.contact-panel-title span {
+    font-size: 13px;
+    color: rgb(100, 116, 139);
+}
+
+.contact-panel-id {
+    font-size: 12px;
+    color: rgb(148, 163, 184);
+}
+
+.contact-tabs {
+    display: flex;
+    padding: 0 16px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.contact-tab {
+    flex: 1;
+    padding: 10px 0;
+    border: none;
+    background: none;
+    font-size: 14px;
+    cursor: pointer;
+    color: rgb(100, 116, 139);
+}
+
+.contact-tab-active {
+    font-weight: 600;
+    color: rgb(37, 99, 235);
+    border-bottom: 2px solid rgb(37, 99, 235);
+}
+
+.contact-panel-body {
+    padding: 16px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.contact-panel-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.contact-primary-btn {
+    padding: 10px 14px;
+    border-radius: 999px;
+    border: none;
+    background: rgb(37, 99, 235);
+    color: rgb(255, 255, 255);
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.contact-panel-empty {
+    font-size: 14px;
+    color: rgb(148, 163, 184);
+}
+
+/* MODAL CENTRAL IGUAL WHATSAPP */
+
+.contact-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 23, 42, 0.45);
+    z-index: 60;
+}
+
+.contact-card {
+    width: 360px;
+    max-height: 560px;
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow: 0 24px 80px rgba(15, 23, 42, 0.26);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.contact-card-header {
+    position: relative;
+    padding: 32px 24px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.contact-avatar-large {
+    width: 88px;
+    height: 88px;
+    border-radius: 999px;
+    overflow: hidden;
+    border: 2px solid rgba(148, 163, 184, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 30% 20%,
+            rgb(96, 165, 250),
+            rgb(37, 99, 235));
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 32px;
+}
+
+.contact-avatar-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.contact-card-title {
+    text-align: center;
+}
+
+.contact-card-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: rgb(15, 23, 42);
+}
+
+.contact-card-phone,
+.contact-card-id {
+    font-size: 13px;
+    color: rgb(100, 116, 139);
+}
+
+.contact-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    border: none;
+    background: transparent;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    color: rgb(148, 163, 184);
+}
+
+.contact-body {
+    padding: 24px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.contact-export-btn {
+    width: 100%;
+    border-radius: 999px;
+    border: none;
+    padding: 12px 16px;
+    background: linear-gradient(to right,
+            rgb(59, 130, 246),
+            rgb(37, 99, 235));
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+/* grade mock de mídia */
+
+.contact-media-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.contact-media-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+    font-size: 11px;
+    color: rgb(100, 116, 139);
+}
+
+.contact-media-thumb {
+    width: 92px;
+    height: 92px;
+    border-radius: 18px;
+    background: linear-gradient(135deg,
+            rgba(226, 232, 240, 0.95),
+            rgba(203, 213, 225, 0.95));
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
+}
+
+.contact-media-label {
+    text-align: center;
+    max-width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }

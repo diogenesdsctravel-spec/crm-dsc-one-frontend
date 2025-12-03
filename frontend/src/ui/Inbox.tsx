@@ -22,6 +22,7 @@ export type InboxCardProps = {
   overrideSubtitle?: string;
   isOverdue?: boolean;
   subtitleVariant?: "default" | "full";
+  compact?: boolean;
 };
 
 export function InboxCard({
@@ -33,7 +34,10 @@ export function InboxCard({
   overrideSubtitle,
   isOverdue,
   subtitleVariant = "default",
+  compact = false,
 }: InboxCardProps) {
+  console.log("🔍 InboxCard compact:", compact);  // ← ADICIONADO PARA DEBUG
+
   const initial = conversation.nome?.trim()?.[0]?.toUpperCase() || "C";
   const hasUnread = (conversation.unreadCount ?? 0) > 0;
 
@@ -59,7 +63,8 @@ export function InboxCard({
       className={
         "inbox-item" +
         (selected ? " inbox-item-active" : "") +
-        (hasUnread ? " inbox-item-unread" : "")
+        (hasUnread ? " inbox-item-unread" : "") +
+        (compact ? " inbox-item--compact" : "")
       }
       onClick={onClick}
       draggable={!!onDragStart}
